@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:kalil_widgets/constants.dart';
 
 class BlurOverlay extends StatefulWidget {
   final Widget child;
@@ -17,7 +18,7 @@ class BlurOverlay extends StatefulWidget {
     this.intensity = 1.0,
     this.color,
     Duration duration})
-      : this.duration = (duration != null) ? duration : Duration(milliseconds: 400),
+      : this.duration = (duration != null) ? duration : Constants.durationAnimationMedium,
        super(key: key);
 
   @override

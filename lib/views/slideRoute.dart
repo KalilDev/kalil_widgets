@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:kalil_widgets/constants.dart';
 
 class SlideRoute<T> extends MaterialPageRoute<T> {
   final Duration duration;
   SlideRoute({WidgetBuilder builder, RouteSettings settings, Duration duration})
-      : this.duration = (duration != null) ? duration : Duration(milliseconds: 600),
+      : this.duration = (duration != null) ? duration : Constants.durationAnimationRoute,
         super(builder: builder, settings: settings);
 
   @override

@@ -1,6 +1,6 @@
 name: kalil_widgets
 description: Widgets used on kalil's projects.
-version: 0.0.1
+version: 0.0.2
 author:
 homepage:
 
@@ -13,6 +13,7 @@ dependencies:
   transformer_page_view:
     git:
       url: git://github.com/kalildev/transformer_page_view.git
+  audioplayers: ^0.12.0
 
 dev_dependencies:
   flutter_test:

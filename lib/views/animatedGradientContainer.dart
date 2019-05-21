@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:kalil_widgets/constants.dart';
 import 'oldGradient.dart' as old;
 
 class AnimatedGradientContainer extends StatefulWidget {
@@ -13,7 +13,7 @@ class AnimatedGradientContainer extends StatefulWidget {
     this.trueValues = const [0.6, 1.0],
     this.falseValues = const [0.0, 0.4],
     Duration duration,
-  }) : this.duration = (duration != null) ? duration : const Duration(milliseconds: 600),
+  }) : this.duration = (duration != null) ? duration : Constants.durationAnimationLong,
        super(key: key);
 
   final bool isEnabled;
