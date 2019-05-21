@@ -1,6 +1,6 @@
 # kalil_widgets
 
-A new Flutter package project.
+This package has highly reusable widgets that were previously located on the texts app 
 
 ## Getting Started
 
