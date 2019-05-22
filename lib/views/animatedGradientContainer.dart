@@ -67,6 +67,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
   @override
   void dispose() {
     _controller.dispose();
+    _onChangeController.dispose();
     super.dispose();
   }
 

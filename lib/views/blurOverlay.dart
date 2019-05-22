@@ -26,7 +26,7 @@ class BlurOverlay extends StatefulWidget {
 
   BlurOverlay.roundedRect({Key key,
     @required this.child,
-    @required radius,
+    @required double radius,
     @required this.enabled,
     this.intensity = 1.0,
     this.color,
@@ -78,7 +78,7 @@ class _BlurOverlayState extends State<BlurOverlay>
   Widget build(BuildContext context) {
     return AnimatedBuilder(animation: _animation, builder: (context, child) {
       if (_wasEnabled != widget.enabled) {
-        setState(() => _wasEnabled = widget.enabled);
+        _wasEnabled = widget.enabled;
         widget.enabled ? _blurController.forward() : _blurController.reverse();
       }
       final Color defaultColor = Color.lerp(
