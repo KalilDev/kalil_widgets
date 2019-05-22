@@ -23,7 +23,7 @@ class ImageBackground extends StatelessWidget {
       return Container(
           height: height != null ? height : constrains.maxHeight,
           width: constrains.maxWidth,
-          child: BlurOverlay(
+          child: BlurOverlay.roundedRect(
               child: img != 'null'
                   ? ParallaxImage.cachedNetwork(img, position: position)
                   : SizedBox(),

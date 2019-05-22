@@ -93,7 +93,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
         child: Material(
           color: Colors.transparent,
           elevation: 16.0,
-          child: BlurOverlay(
+          child: BlurOverlay.roundedRect(
             radius: 80,
             enabled: widget.isBlurred,
             child: Container(

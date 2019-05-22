@@ -86,9 +86,8 @@ class _BiStateFABState extends State<BiStateFAB>
       child: Material(
         color: Colors.transparent,
         elevation: 16.0,
-        child: BlurOverlay(
+        child: BlurOverlay.circle(
           enabled: widget.isBlurred,
-          radius: 100,
           child: AnimatedGradientContainer(
             colors: widget.isBlurred ? <Color>[
               Theme

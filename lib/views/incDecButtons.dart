@@ -50,7 +50,7 @@ class IncDecButtonState extends State<IncDecButton>
       child: Material(
         color: Colors.transparent,
         elevation: 16.0,
-        child: BlurOverlay(
+        child: BlurOverlay.roundedRect(
           enabled: widget.isBlurred,
           radius: 80,
           child: Material(
