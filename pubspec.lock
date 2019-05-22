@@ -194,11 +194,9 @@ packages:
   transformer_page_view:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "87a647d2d18194883679c9183cf4a54441fa87c0"
-      url: "git://github.com/kalildev/transformer_page_view.git"
-    source: git
+      path: "..\\transformer_page_view"
+      relative: true
+    source: path
     version: "0.1.8"
   typed_data:
     dependency: transitive

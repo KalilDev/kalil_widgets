@@ -115,8 +115,8 @@ class _IncreaseButtonState extends State<IncreaseButton>
   @override
   Widget build(BuildContext context) {
     if (oldValue != widget.value) {
-      oldValue = widget.value;
       if (oldValue < widget.value) _plusController.reverse();
+      oldValue = widget.value;
     }
     return ScaleTransition(
         child: IconButton(
@@ -168,8 +168,8 @@ class _DecreaseButtonState extends State<DecreaseButton>
   @override
   Widget build(BuildContext context) {
     if (oldValue != widget.value) {
-      oldValue = widget.value;
       if (oldValue > widget.value) _minusController.reverse();
+      oldValue = widget.value;
     }
     return ScaleTransition(
         child: IconButton(
