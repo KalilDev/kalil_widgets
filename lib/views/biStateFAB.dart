@@ -96,14 +96,14 @@ class _BiStateFABState extends State<BiStateFAB>
                   .withAlpha(150),
               Theme
                   .of(context)
-                  .accentColor
+                  .primaryColor
                   .withAlpha(150)
             ] : [Theme
                 .of(context)
                 .backgroundColor,
             Theme
                 .of(context)
-                .accentColor
+                .primaryColor
             ],
             trueValues: [1.0, 2.0],
             falseValues: [-1.0, 0.0],
@@ -123,9 +123,7 @@ class _BiStateFABState extends State<BiStateFAB>
                 child: Icon(
                     widget.isEnabled ? widget.icons[0] : widget.icons[1],
                     color:
-                    widget.isEnabled ? Colors.red : Theme
-                        .of(context)
-                        .primaryColor),
+                    widget.isEnabled ? Colors.red : Theme.of(context).primaryColorBrightness == Brightness.light ? Colors.black : Theme.of(context).iconTheme.color),
               ),
               onPressed: widget.onPressed,
               tooltip: Constants.textTooltipFav,

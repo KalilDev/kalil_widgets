@@ -85,11 +85,11 @@ class _BlurOverlayState extends State<BlurOverlay>
           Theme
               .of(context)
               .backgroundColor
-              .withAlpha(170),
+              .withAlpha(190),
           Theme
               .of(context)
               .backgroundColor
-              .withAlpha(120),
+              .withAlpha(190),
           _animation.value);
       final _overlayColor = widget.color ?? defaultColor;
       final sigma = 4 * widget.intensity * _animation.value;

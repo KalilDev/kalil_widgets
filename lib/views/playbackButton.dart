@@ -88,6 +88,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
     final playbackProportion = _position != null && _duration != null
         ? _position.inMilliseconds / _duration.inMilliseconds
         : 0.0;
+    final color = Theme.of(context).primaryColorBrightness == Brightness.light ? Colors.black : Theme.of(context).iconTheme.color;
     return ScaleTransition(
         scale: _scale,
         child: Material(
@@ -105,12 +106,12 @@ class _PlaybackButtonState extends State<PlaybackButton>
                         Colors.red.shade900.withAlpha(150),
                         Theme
                             .of(context)
-                            .accentColor
+                            .primaryColor
                             .withAlpha(150)
                       ]
                           : [Colors.red.shade900, Theme
                           .of(context)
-                          .accentColor
+                          .primaryColor
                       ],
                       stops: [-1 + playbackProportion, 2 * playbackProportion
                       ])),
@@ -124,10 +125,11 @@ class _PlaybackButtonState extends State<PlaybackButton>
                             child: _playerState == PlayerState.stopped
                                 ? Icon(playbackProportion == 0.0
                                     ? Icons.play_arrow
-                                : Icons.refresh)
+                                : Icons.refresh, color: color)
                                 : AnimatedIcon(
                                 icon: AnimatedIcons.play_pause,
-                                progress: _playAnim)),
+                                progress: _playAnim,
+                                color: color)),
                       onTap: _isPlaying ? _pause : _play,
                     ),
                   ),
@@ -146,7 +148,8 @@ class _PlaybackButtonState extends State<PlaybackButton>
                                 .copyWith(
                                 trackHeight: 15.0,
                                 activeTrackColor: Colors.transparent,
-                                inactiveTrackColor: Colors.transparent),
+                                inactiveTrackColor: Colors.transparent,
+                                thumbColor: color),
                             child: Slider(
                               max: _duration?.inMilliseconds?.toDouble() ?? 1.0,
                               value: (_position != null &&

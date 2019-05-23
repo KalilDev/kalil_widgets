@@ -57,7 +57,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
     _controller.value = widget.isEnabled ? 1.0 : 0.0;
 
     _oldColors = widget.colors;
-    _onChangeController = new AnimationController(vsync: this, duration: widget.duration);
+    _onChangeController = new AnimationController(vsync: this, duration: Constants.durationAnimationMedium);
     _onChangeAnim = new CurvedAnimation(parent: _onChangeController, curve: Curves.easeInOut);
     _onChangeController.addListener(() {
       if (_controller.status == AnimationStatus.completed || _controller.status == AnimationStatus.dismissed) _oldColors = widget.colors;

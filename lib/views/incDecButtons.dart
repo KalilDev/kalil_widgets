@@ -17,24 +17,40 @@ class IncDecButton extends StatefulWidget {
 
 class IncDecButtonState extends State<IncDecButton>
     with TickerProviderStateMixin {
-  AnimationController _animationController;
+  AnimationController _scaleController;
   Animation<double> _scale;
+
+  AnimationController _colorController;
+  Animation<double> _color;
+  Color _oldColor;
+  Color _newColor;
 
   @override
   initState() {
     super.initState();
-    _animationController = new AnimationController(
+    _scaleController = new AnimationController(
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
         vsync: this);
     _scale = Tween(begin: animationStart, end: 1.0).animate(CurvedAnimation(
-        parent: _animationController, curve: Curves.easeInOut));
-    _animationController.forward();
+        parent: _scaleController, curve: Curves.easeInOut));
+    _scaleController.forward();
+    _colorController = new AnimationController(
+      duration: Constants.durationAnimationMedium,
+      vsync: this
+    );
+    _color = new CurvedAnimation(parent: _colorController, curve: Curves.easeInOut);
+    _colorController.addListener(() {
+      if (_colorController.status == AnimationStatus.completed) {
+        _colorController.value = 0.0;
+        _oldColor = _newColor;
+      }
+    });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _scaleController.dispose();
     super.dispose();
   }
 
@@ -45,6 +61,23 @@ class IncDecButtonState extends State<IncDecButton>
 
   @override
   Widget build(BuildContext context) {
+    final color = widget.isBlurred
+        ? Theme
+        .of(context)
+        .primaryColor
+        .withAlpha(150)
+        : Theme
+        .of(context)
+        .primaryColor;
+    if (color != _newColor) {
+      _newColor = color;
+      if (_oldColor != null) {
+        _colorController.forward();
+      } else {
+        _oldColor = color;
+      }
+      print(color.value.toString() + ' ' + _newColor.value.toString());
+    }
     return ScaleTransition(
       scale: _scale,
       child: Material(
@@ -53,21 +86,17 @@ class IncDecButtonState extends State<IncDecButton>
         child: BlurOverlay.roundedRect(
           enabled: widget.isBlurred,
           radius: 80,
-          child: Material(
-            color: widget.isBlurred
-                ? Theme
-                .of(context)
-                .accentColor
-                .withAlpha(150)
-                : Theme
-                .of(context)
-                .accentColor,
-            child: Row(children: <Widget>[
-              DecreaseButton(
-                  value: widget.value, onDecrease: widget.onDecrease),
-              IncreaseButton(
-                  value: widget.value, onIncrease: widget.onIncrease),
-            ]),
+          child: AnimatedBuilder(
+            animation: _color,
+            builder: (context, _) => Material(
+                color: ColorTween(begin: _oldColor, end: color).lerp(_color.value),
+                child: Row(children: <Widget>[
+                  DecreaseButton(
+                      value: widget.value, onDecrease: widget.onDecrease, isInverted: true,),
+                  IncreaseButton(
+                      value: widget.value, onIncrease: widget.onIncrease, isInverted: true,),
+                ]),
+              )
           ),
         ),
       ),
@@ -78,8 +107,10 @@ class IncDecButtonState extends State<IncDecButton>
 class IncreaseButton extends StatefulWidget {
   final double value;
   final VoidCallback onIncrease;
+  final bool isInverted;
 
-  IncreaseButton({@required this.value, @required this.onIncrease});
+  IncreaseButton({@required this.value, @required this.onIncrease, isInverted})
+  : this.isInverted = isInverted != null ? isInverted : false;
   @override
   _IncreaseButtonState createState() => _IncreaseButtonState();
 }
@@ -120,7 +151,7 @@ class _IncreaseButtonState extends State<IncreaseButton>
     }
     return ScaleTransition(
         child: IconButton(
-          icon: Icon(Icons.arrow_upward),
+          icon: Icon(Icons.arrow_upward, color: Theme.of(context).primaryColorBrightness == Brightness.light && widget.isInverted ? Colors.black : Theme.of(context).iconTheme.color),
           onPressed: widget.onIncrease,
           tooltip: Constants.textTooltipTextSizePlus,
         ),
@@ -131,8 +162,10 @@ class _IncreaseButtonState extends State<IncreaseButton>
 class DecreaseButton extends StatefulWidget {
   final double value;
   final VoidCallback onDecrease;
+  final bool isInverted;
 
-  DecreaseButton({@required this.value, @required this.onDecrease});
+  DecreaseButton({@required this.value, @required this.onDecrease, isInverted})
+      : this.isInverted = isInverted != null ? isInverted : false;
   @override
   _DecreaseButtonState createState() => _DecreaseButtonState();
 }
@@ -173,9 +206,7 @@ class _DecreaseButtonState extends State<DecreaseButton>
     }
     return ScaleTransition(
         child: IconButton(
-          icon: Icon(
-            Icons.arrow_downward,
-          ),
+          icon: Icon(Icons.arrow_downward, color: Theme.of(context).primaryColorBrightness == Brightness.light && widget.isInverted ? Colors.black : Theme.of(context).iconTheme.color),
           onPressed: widget.onDecrease,
           tooltip: Constants.textTooltipTextSizeLess,
         ),
