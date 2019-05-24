@@ -71,7 +71,7 @@ class ElevatedContainer extends StatelessWidget {
   BoxDecoration materialCompliantElevation({Color bg, Brightness brightness}) {
     if (brightness == Brightness.dark) {
       return BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: borderRadius,
           color: Color.alphaBlend(
               Colors.white.withAlpha((alpha * 2.55).round()), bg));
     } else {

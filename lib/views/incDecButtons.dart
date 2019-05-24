@@ -76,7 +76,6 @@ class IncDecButtonState extends State<IncDecButton>
       } else {
         _oldColor = color;
       }
-      print(color.value.toString() + ' ' + _newColor.value.toString());
     }
     return ScaleTransition(
       scale: _scale,
