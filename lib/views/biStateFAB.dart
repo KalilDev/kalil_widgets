@@ -10,20 +10,28 @@ class BiStateFAB extends StatefulWidget {
   final bool isBlurred;
   final bool isEnabled;
   final List<IconData> icons;
+  final Color disabledColor;
+  final Color enabledColor;
+  final Brightness disabledColorBrightness;
 
   BiStateFAB(
-      {@required this.onPressed, @required this.isBlurred, @required this.isEnabled, IconData enabledIcon, IconData disabledIcon})
+      {@required this.onPressed,
+      @required this.isBlurred,
+      @required this.isEnabled,
+      IconData enabledIcon,
+      IconData disabledIcon,
+      this.enabledColor,
+      this.disabledColor,
+      this.disabledColorBrightness})
       : this.icons = [
-    (enabledIcon != null) ? enabledIcon : Icons.favorite,
-    (disabledIcon != null) ? disabledIcon : Icons.favorite_border
-  ];
+          (enabledIcon != null) ? enabledIcon : Icons.favorite,
+          (disabledIcon != null) ? disabledIcon : Icons.favorite_border
+        ];
 
   createState() => _BiStateFABState();
 }
 
-class _BiStateFABState extends State<BiStateFAB>
-    with TickerProviderStateMixin {
-
+class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
   AnimationController _scaleController;
   AnimationController _iconController;
   Animation<double> _scale;
@@ -39,18 +47,16 @@ class _BiStateFABState extends State<BiStateFAB>
     _iconController = new AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
 
-    _scale =
-        Tween(begin: animationStart, end: 1.0).animate(
-            CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
+    _scale = Tween(begin: animationStart, end: 1.0).animate(
+        CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
     _iconScale =
-    new CurvedAnimation(parent: _iconController, curve: Curves.easeInOut);
+        new CurvedAnimation(parent: _iconController, curve: Curves.easeInOut);
 
     _scaleController.forward();
     _iconController.value = 1.0;
     Future.delayed(
         Constants.durationAnimationRoute + Constants.durationAnimationMedium,
-            () =>
-            _iconController.notifyStatusListeners(AnimationStatus.completed));
+        () => _iconController.notifyStatusListeners(AnimationStatus.completed));
   }
 
   @override
@@ -62,7 +68,7 @@ class _BiStateFABState extends State<BiStateFAB>
 
   double get animationStart =>
       0 -
-          (Constants.durationAnimationRoute.inMilliseconds /
+      (Constants.durationAnimationRoute.inMilliseconds /
           Constants.durationAnimationMedium.inMilliseconds);
 
   @override
@@ -81,6 +87,10 @@ class _BiStateFABState extends State<BiStateFAB>
         _iconController.animateTo(1.0);
       }
     });
+
+    final enabledColor = widget?.enabledColor ?? Colors.red;
+    final disabledColor = widget?.disabledColor ?? Theme.of(context).primaryColor;
+    final disabledColorBrightness = widget?.disabledColorBrightness ?? Theme.of(context).primaryColorBrightness;
     return ScaleTransition(
       scale: _scale,
       child: Material(
@@ -89,22 +99,15 @@ class _BiStateFABState extends State<BiStateFAB>
         child: BlurOverlay.circle(
           enabled: widget.isBlurred,
           child: AnimatedGradientContainer(
-            colors: widget.isBlurred ? <Color>[
-              Theme
-                  .of(context)
-                  .backgroundColor
-                  .withAlpha(150),
-              Theme
-                  .of(context)
-                  .primaryColor
-                  .withAlpha(150)
-            ] : [Theme
-                .of(context)
-                .backgroundColor,
-            Theme
-                .of(context)
-                .primaryColor
-            ],
+            colors: widget.isBlurred
+                ? <Color>[
+                    Theme.of(context).backgroundColor.withAlpha(150),
+                    disabledColor.withAlpha(150)
+                  ]
+                : [
+                    Theme.of(context).backgroundColor,
+                    disabledColor
+                  ],
             trueValues: [1.0, 2.0],
             falseValues: [-1.0, 0.0],
             isEnabled: widget.isEnabled,
@@ -115,15 +118,19 @@ class _BiStateFABState extends State<BiStateFAB>
                 scale: widget.isEnabled
                     ? Tween(begin: 0.7, end: 1.3).animate(_iconScale)
                     : Tween(
-                    begin: Tween(begin: 0.7, end: 1.3)
-                        .animate(_iconScale)
-                        .value,
-                    end: 1.0)
-                    .animate(_iconScale),
+                            begin: Tween(begin: 0.7, end: 1.3)
+                                .animate(_iconScale)
+                                .value,
+                            end: 1.0)
+                        .animate(_iconScale),
                 child: Icon(
                     widget.isEnabled ? widget.icons[0] : widget.icons[1],
-                    color:
-                    widget.isEnabled ? Colors.red : Theme.of(context).primaryColorBrightness == Brightness.light ? Colors.black : Theme.of(context).iconTheme.color),
+                    color: widget.isEnabled
+                        ? enabledColor
+                        : disabledColorBrightness ==
+                                Brightness.light
+                            ? Theme.of(context).backgroundColor
+                            : Theme.of(context).iconTheme.color),
               ),
               onPressed: widget.onPressed,
               tooltip: Constants.textTooltipFav,
