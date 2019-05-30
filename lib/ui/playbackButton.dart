@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'blurOverlay.dart';
+import 'nonNegativeTween.dart';
 import '../constants.dart';
 
 enum PlayerState { stopped, playing, paused }
@@ -61,7 +62,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
         vsync: this);
-    _scale = Tween(begin: animationStart, end: 1.0).animate(
+    _scale = NonNegativeTween(begin: animationStart, end: 1.0).animate(
         CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
     _scaleController.forward();
   }
@@ -80,6 +81,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
     _playerErrorSubscription?.cancel();
     _playerStateSubscription?.cancel();
     _playController.dispose();
+    _scaleController.dispose();
     super.dispose();
   }
 

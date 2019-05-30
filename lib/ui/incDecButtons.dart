@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'blurOverlay.dart';
+import 'nonNegativeTween.dart';
 
 import '../constants.dart';
 
@@ -32,7 +33,7 @@ class IncDecButtonState extends State<IncDecButton>
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
         vsync: this);
-    _scale = Tween(begin: animationStart, end: 1.0).animate(CurvedAnimation(
+    _scale = NonNegativeTween(begin: animationStart, end: 1.0).animate(CurvedAnimation(
         parent: _scaleController, curve: Curves.easeInOut));
     _scaleController.forward();
     _colorController = new AnimationController(

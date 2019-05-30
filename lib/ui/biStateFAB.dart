@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'blurOverlay.dart';
 import 'animatedGradientContainer.dart';
+import 'nonNegativeTween.dart';
 import '../constants.dart';
 
 class BiStateFAB extends StatefulWidget {
@@ -36,6 +37,7 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
   AnimationController _iconController;
   Animation<double> _scale;
   Animation<double> _iconScale;
+  bool disposed = false;
 
   @override
   void initState() {
@@ -47,7 +49,7 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
     _iconController = new AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
 
-    _scale = Tween(begin: animationStart, end: 1.0).animate(
+    _scale = NonNegativeTween(begin: animationStart, end: 1.0).animate(
         CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
     _iconScale =
         new CurvedAnimation(parent: _iconController, curve: Curves.easeInOut);
@@ -63,6 +65,7 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
   void dispose() {
     _iconController.dispose();
     _scaleController.dispose();
+    disposed = true;
     super.dispose();
   }
 
@@ -77,14 +80,16 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
       _iconController.notifyStatusListeners(AnimationStatus.completed);
     }
     _iconScale.addStatusListener((status) {
-      if (widget.isEnabled) {
-        if (status == AnimationStatus.completed) {
-          _iconController.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          _iconController.forward();
+      if(!disposed) {
+        if (widget.isEnabled) {
+          if (status == AnimationStatus.completed) {
+            _iconController.reverse();
+          } else if (status == AnimationStatus.dismissed) {
+            _iconController.forward();
+          }
+        } else {
+          _iconController.animateTo(1.0);
         }
-      } else {
-        _iconController.animateTo(1.0);
       }
     });
 
