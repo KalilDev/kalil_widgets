@@ -1,6 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kalil_widgets/constants.dart';
-import 'dart:ui';
 
 class AnimatedGradientContainer extends StatefulWidget {
   const AnimatedGradientContainer({
@@ -10,10 +10,10 @@ class AnimatedGradientContainer extends StatefulWidget {
     @required this.colors,
     this.height,
     this.width,
-    this.trueValues = const [0.6, 1.0],
-    this.falseValues = const [0.0, 0.4],
+    this.trueValues = const <double>[0.6, 1.0],
+    this.falseValues = const <double>[0.0, 0.4],
     Duration duration,
-  }) : this.duration = (duration != null) ? duration : Constants.durationAnimationLong,
+  }) : duration = (duration != null) ? duration : Constants.durationAnimationLong,
        super(key: key);
 
   final bool isEnabled;
@@ -44,11 +44,10 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
   @override
   void initState() {
     super.initState();
-    _controller = new AnimationController(
+    _controller = AnimationController(
         vsync: this, duration: widget.duration);
-    Animation curved =
-        new CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _animation = new LinearGradientTween(
+    final Animation<double> curved = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+    _animation = LinearGradientTween(
         begin: LinearGradient(
                 colors: widget.colors, stops: widget.falseValues),
             end:
@@ -57,10 +56,11 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
     _controller.value = widget.isEnabled ? 1.0 : 0.0;
 
     _oldColors = widget.colors;
-    _onChangeController = new AnimationController(vsync: this, duration: Constants.durationAnimationMedium);
-    _onChangeAnim = new CurvedAnimation(parent: _onChangeController, curve: Curves.easeInOut);
+    _onChangeController = AnimationController(vsync: this, duration: Constants.durationAnimationMedium);
+    _onChangeAnim = CurvedAnimation(parent: _onChangeController, curve: Curves.easeInOut);
     _onChangeController.addListener(() {
-      if (_controller.status == AnimationStatus.completed || _controller.status == AnimationStatus.dismissed) _oldColors = widget.colors;
+      if (_controller.status == AnimationStatus.completed || _controller.status == AnimationStatus.dismissed)
+        _oldColors = widget.colors;
     });
   }
 
@@ -73,9 +73,8 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
 
   @override
   Widget build(BuildContext context) {
-    Animation curved =
-    new CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _animation = new LinearGradientTween(
+    final Animation<double> curved = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+    _animation = LinearGradientTween(
         begin: LinearGradient(
             colors: _oldColors, stops: widget.falseValues),
         end:
@@ -89,21 +88,19 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
       _onChangeController.value = 0.0;
       _onChangeController.forward();
     }
-    return LayoutBuilder(
-      builder: (context, constrains) => AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) => AnimatedBuilder(
-            animation: _onChangeAnim,
-              builder: (context, child) => Container(
-              height: widget.height,
-              width: widget.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradientTween(begin: _animation.value, end: LinearGradient(colors: widget.colors, stops: _animation.value.stops)).lerp(_onChangeAnim.value),
-              ),
-              child: widget.child,
-          )
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (BuildContext context, _) => AnimatedBuilder(
+          animation: _onChangeAnim,
+            builder: (BuildContext context, _) => Container(
+            height: widget.height,
+            width: widget.width,
+            decoration: BoxDecoration(
+              gradient: LinearGradientTween(begin: _animation.value, end: LinearGradient(colors: widget.colors, stops: _animation.value.stops)).lerp(_onChangeAnim.value),
+            ),
+            child: widget.child,
         )
-      ),
+      )
     );
   }
 }
@@ -118,9 +115,12 @@ class LinearGradientTween extends Tween<LinearGradient> {
   @override
   LinearGradient lerp(double t) {
     assert(t != null);
-    if (begin == null && end == null) return null;
-    if (begin == null) return end.scale(t);
-    if (end == null) return begin.scale(1.0 - t);
+    if (begin == null && end == null)
+      return null;
+    if (begin == null)
+      return end.scale(t);
+    if (end == null)
+      return begin.scale(1.0 - t);
     final _ColorsAndStops interpolated =
     _interpolateColorsAndStops(begin.colors, begin.stops, end.colors, end.stops, t);
     return LinearGradient(

@@ -4,65 +4,61 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../constants.dart';
 import 'blurOverlay.dart';
 import 'nonNegativeTween.dart';
-import '../constants.dart';
 
 enum PlayerState { stopped, playing, paused }
 
 class PlaybackButton extends StatefulWidget {
+  const PlaybackButton(
+      {@required this.url,
+        this.isLocal = false,
+        this.mode = PlayerMode.MEDIA_PLAYER,
+        @required this.isBlurred});
+
   final String url;
   final bool isLocal;
   final PlayerMode mode;
   final bool isBlurred;
 
-  PlaybackButton(
-      {@required this.url,
-      this.isLocal = false,
-        this.mode = PlayerMode.MEDIA_PLAYER,
-        @required this.isBlurred});
-
   @override
-  State<StatefulWidget> createState() {
-    return new _PlaybackButtonState();
-  }
+  _PlaybackButtonState createState() => _PlaybackButtonState();
 }
 
 class _PlaybackButtonState extends State<PlaybackButton>
     with TickerProviderStateMixin {
   AudioPlayer _audioPlayer;
-  AudioPlayerState _audioPlayerState;
   Duration _duration;
   Duration _position;
 
   PlayerState _playerState = PlayerState.stopped;
-  StreamSubscription _durationSubscription;
-  StreamSubscription _positionSubscription;
-  StreamSubscription _playerCompleteSubscription;
-  StreamSubscription _playerErrorSubscription;
-  StreamSubscription _playerStateSubscription;
+  StreamSubscription<Duration> _durationSubscription;
+  StreamSubscription<Duration> _positionSubscription;
+  StreamSubscription<void> _playerCompleteSubscription;
+  StreamSubscription<String> _playerErrorSubscription;
 
   AnimationController _playController;
   Animation<double> _playAnim;
   AnimationController _scaleController;
   Animation<double> _scale;
 
-  get _isPlaying => _playerState == PlayerState.playing;
+  bool get _isPlaying => _playerState == PlayerState.playing;
 
   @override
   void initState() {
     super.initState();
     _initAudioPlayer();
-    _playController = new AnimationController(
+    _playController = AnimationController(
         vsync: this, duration: Constants.durationAnimationShort);
     _playAnim =
-    new CurvedAnimation(parent: _playController, curve: Curves.easeInOut);
+    CurvedAnimation(parent: _playController, curve: Curves.easeInOut);
     _playController.value = 0.0;
-    _scaleController = new AnimationController(
+    _scaleController = AnimationController(
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
         vsync: this);
-    _scale = NonNegativeTween(begin: animationStart, end: 1.0).animate(
+    _scale = NonNegativeTween<double>(begin: animationStart, end: 1.0).animate(
         CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
     _scaleController.forward();
   }
@@ -79,7 +75,6 @@ class _PlaybackButtonState extends State<PlaybackButton>
     _positionSubscription?.cancel();
     _playerCompleteSubscription?.cancel();
     _playerErrorSubscription?.cancel();
-    _playerStateSubscription?.cancel();
     _playController.dispose();
     _scaleController.dispose();
     super.dispose();
@@ -87,10 +82,10 @@ class _PlaybackButtonState extends State<PlaybackButton>
 
   @override
   Widget build(BuildContext context) {
-    final playbackProportion = _position != null && _duration != null
+    final double playbackProportion = _position != null && _duration != null
         ? _position.inMilliseconds / _duration.inMilliseconds
         : 0.0;
-    final color = Theme.of(context).primaryColorBrightness == Brightness.light ? Colors.black : Theme.of(context).iconTheme.color;
+    final Color color = Theme.of(context).primaryColorBrightness == Brightness.light ? Colors.black : Theme.of(context).iconTheme.color;
     return ScaleTransition(
         scale: _scale,
         child: Material(
@@ -104,18 +99,18 @@ class _PlaybackButtonState extends State<PlaybackButton>
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                       colors: widget.isBlurred
-                          ? [
+                          ? <Color>[
                         Colors.red.shade900.withAlpha(150),
                         Theme
                             .of(context)
                             .primaryColor
                             .withAlpha(150)
                       ]
-                          : [Colors.red.shade900, Theme
+                          : <Color>[Colors.red.shade900, Theme
                           .of(context)
                           .primaryColor
                       ],
-                      stops: [-1 + playbackProportion, 2 * playbackProportion
+                      stops: <double>[-1 + playbackProportion, 2 * playbackProportion
                       ])),
               child: Stack(
                 alignment: Alignment.center,
@@ -161,7 +156,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
                                       _duration.inMilliseconds)
                                   ? _position.inMilliseconds.toDouble()
                                   : 0.0,
-                              onChanged: (value) =>
+                              onChanged: (double value) =>
                                   _audioPlayer
                                       .seek(
                                       Duration(milliseconds: value.round())),
@@ -181,63 +176,58 @@ class _PlaybackButtonState extends State<PlaybackButton>
   }
 
   void _initAudioPlayer() {
-    _audioPlayer = new AudioPlayer(mode: widget.mode);
+    _audioPlayer = AudioPlayer(mode: widget.mode);
 
     _durationSubscription =
-        _audioPlayer.onDurationChanged.listen((duration) => setState(() {
+        _audioPlayer.onDurationChanged.listen((Duration duration) => setState(() {
               _duration = duration;
             }));
 
     _positionSubscription =
-        _audioPlayer.onAudioPositionChanged.listen((p) => setState(() {
+        _audioPlayer.onAudioPositionChanged.listen((Duration p) => setState(() {
               _position = p;
             }));
 
     _playerCompleteSubscription =
-        _audioPlayer.onPlayerCompletion.listen((event) {
+        _audioPlayer.onPlayerCompletion.listen((_) {
       _onComplete();
       setState(() {
         _position = _duration;
       });
     });
 
-    _playerErrorSubscription = _audioPlayer.onPlayerError.listen((msg) {
+    _playerErrorSubscription = _audioPlayer.onPlayerError.listen((String msg) {
       print('audioPlayer error : $msg');
       setState(() {
         _playerState = PlayerState.stopped;
-        _duration = new Duration(seconds: 0);
-        _position = new Duration(seconds: 0);
-      });
-    });
-
-    _audioPlayer.onPlayerStateChanged.listen((state) {
-      if (!mounted) return;
-      setState(() {
-        _audioPlayerState = state;
+        _duration = Duration(seconds: 0);
+        _position = Duration(seconds: 0);
       });
     });
   }
 
   Future<int> _play() async {
     HapticFeedback.selectionClick();
-    final playPosition = (_position != null &&
+    final Duration playPosition = (_position != null &&
         _duration != null &&
         _position.inMilliseconds > 0 &&
         _position.inMilliseconds < _duration.inMilliseconds)
         ? _position
         : null;
     _playController.forward();
-    final result = await _audioPlayer.play(widget.url,
+    final int result = await _audioPlayer.play(widget.url,
         isLocal: widget.isLocal, position: playPosition);
-    if (result == 1) setState(() => _playerState = PlayerState.playing);
+    if (result == 1)
+      setState(() => _playerState = PlayerState.playing);
     return result;
   }
 
   Future<int> _pause() async {
     HapticFeedback.selectionClick();
     _playController.reverse();
-    final result = await _audioPlayer.pause();
-    if (result == 1) setState(() => _playerState = PlayerState.paused);
+    final int result = await _audioPlayer.pause();
+    if (result == 1)
+      setState(() => _playerState = PlayerState.paused);
     return result;
   }
 

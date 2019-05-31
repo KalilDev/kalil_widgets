@@ -5,35 +5,26 @@ import 'package:kalil_widgets/constants.dart';
 
 enum Shape { Oval, RRect, Rect }
 class BlurOverlay extends StatefulWidget {
-  final Widget child;
-  final bool enabled;
-  final double intensity;
-  final Color color;
-  final Duration duration;
-  final double radius;
-  final Shape shape;
-
   BlurOverlay({Key key,
     @required this.child,
     @required this.enabled,
     this.intensity = 1.0,
     this.color,
     Duration duration})
-      : this.duration = (duration != null) ? duration : Constants.durationAnimationMedium,
-        this.shape = Shape.Rect,
-        this.radius = null,
+      : duration = (duration != null) ? duration : Constants.durationAnimationMedium,
+        shape = Shape.Rect,
+        radius = null,
         super(key: key);
 
   BlurOverlay.roundedRect({Key key,
     @required this.child,
-    @required double radius,
     @required this.enabled,
     this.intensity = 1.0,
     this.color,
+    @required this.radius,
     Duration duration})
-      : this.duration = (duration != null) ? duration : Constants.durationAnimationMedium,
-        this.shape = Shape.RRect,
-        this.radius = radius,
+      : duration = (duration != null) ? duration : Constants.durationAnimationMedium,
+        shape = Shape.RRect,
         super(key: key);
 
   BlurOverlay.circle({Key key,
@@ -42,10 +33,18 @@ class BlurOverlay extends StatefulWidget {
     this.intensity = 1.0,
     this.color,
     Duration duration})
-      : this.duration = (duration != null) ? duration : Constants.durationAnimationMedium,
-        this.shape = Shape.Oval,
-        this.radius = null,
+      : duration = (duration != null) ? duration : Constants.durationAnimationMedium,
+        shape = Shape.Oval,
+        radius = null,
         super(key: key);
+
+  final Widget child;
+  final bool enabled;
+  final double intensity;
+  final Color color;
+  final Duration duration;
+  final double radius;
+  final Shape shape;
 
   @override
   _BlurOverlayState createState() => _BlurOverlayState();
@@ -59,10 +58,9 @@ class _BlurOverlayState extends State<BlurOverlay>
 
   @override
   void initState() {
-    _blurController = new AnimationController(
+    _blurController = AnimationController(
         vsync: this, duration: widget.duration);
-    _animation =
-    new CurvedAnimation(parent: _blurController, curve: Curves.easeInOut);
+    _animation = CurvedAnimation(parent: _blurController, curve: Curves.easeInOut);
     _wasEnabled = widget.enabled;
     _blurController.value = widget.enabled ? 1.0 : 0.0;
     super.initState();
@@ -76,7 +74,7 @@ class _BlurOverlayState extends State<BlurOverlay>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(animation: _animation, builder: (context, child) {
+    return AnimatedBuilder(animation: _animation, builder: (BuildContext context, _) {
       if (_wasEnabled != widget.enabled) {
         _wasEnabled = widget.enabled;
         widget.enabled ? _blurController.forward() : _blurController.reverse();
@@ -91,8 +89,8 @@ class _BlurOverlayState extends State<BlurOverlay>
               .backgroundColor
               .withAlpha(190),
           _animation.value);
-      final _overlayColor = widget.color ?? defaultColor;
-      final sigma = 4 * widget.intensity * _animation.value;
+      final Color _overlayColor = widget.color ?? defaultColor;
+      final double sigma = 4 * widget.intensity * _animation.value;
 
       switch (widget.shape) {
         case Shape.Rect:

@@ -1,14 +1,14 @@
 class Constants {
   // Texts
   // Tooltips
-  static const textTooltipDrawer = 'Abrir gaveta';
-  static const textTooltipBack = 'Voltar';
-  static const textTooltipFav = 'Adicionar aos favoritos';
-  static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
-  static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
+  static const String textTooltipDrawer = 'Abrir gaveta';
+  static const String textTooltipBack = 'Voltar';
+  static const String textTooltipFav = 'Adicionar aos favoritos';
+  static const String textTooltipTextSizeLess = 'Diminuir tamanho do texto';
+  static const String textTooltipTextSizePlus = 'Aumentar tamanho do texto';
 
   // Material Guidelines
-  static const guidelinesDarkElevation = {
+  static const Map<int,int> guidelinesDarkElevation = <int,int>{
     0: 0,
     1: 5,
     2: 7,
@@ -23,8 +23,8 @@ class Constants {
   };
 
   // Animation durations
-  static const durationAnimationShort = Duration(milliseconds: 200);
-  static const durationAnimationMedium = Duration(milliseconds: 400);
-  static const durationAnimationLong = Duration(milliseconds: 600);
-  static const durationAnimationRoute = Duration(milliseconds: 600);
+  static const Duration durationAnimationShort = Duration(milliseconds: 200);
+  static const Duration durationAnimationMedium = Duration(milliseconds: 400);
+  static const Duration durationAnimationLong = Duration(milliseconds: 600);
+  static const Duration durationAnimationRoute = Duration(milliseconds: 600);
 }

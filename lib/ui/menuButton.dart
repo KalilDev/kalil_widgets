@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final canPop = Navigator.of(context).canPop();
-    pop() => Navigator.of(context).pop();
-    openDrawer() => Scaffold.of(context).openDrawer();
+    bool canPop() => Navigator.of(context).canPop();
+    void pop() => Navigator.of(context).pop();
+    void openDrawer() {
+      if(Scaffold.of(context).hasDrawer)
+        Scaffold.of(context).openDrawer();
+    }
 
     return Hero(
       tag: 'MenuButton',
       child: Tooltip(
-          message: canPop ? 'Voltar' : 'Abrir gaveta',
+          message: canPop() ? 'Voltar' : 'Abrir gaveta',
           child: Material(
             color: Colors.transparent,
             child: InkWell(
@@ -29,10 +32,10 @@ class MenuButton extends StatelessWidget {
                                         .backgroundColor
                                         .withAlpha(90),
                                     shape: BoxShape.circle))),
-                        Center(child: Icon(canPop ? Icons.arrow_back : Icons.menu)),
+                        Center(child: Icon(canPop() ? Icons.arrow_back : Icons.menu)),
                       ],
                     )),
-                onTap: () => canPop ? pop() : openDrawer()),
+                onTap: () => canPop() ? pop() : openDrawer()),
           )),
     );
   }

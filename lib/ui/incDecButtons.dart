@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 import 'blurOverlay.dart';
 import 'nonNegativeTween.dart';
 
-import '../constants.dart';
-
 class IncDecButton extends StatefulWidget {
+  const IncDecButton(
+      {@required this.isBlurred, @required this.value, @required this.onIncrease, @required this.onDecrease});
+
   final bool isBlurred;
   final double value;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
 
-  IncDecButton(
-      {@required this.isBlurred, @required this.value, @required this.onIncrease, @required this.onDecrease});
-
-  createState() => IncDecButtonState();
+  @override
+  _IncDecButtonState createState() => _IncDecButtonState();
 }
 
-class IncDecButtonState extends State<IncDecButton>
+class _IncDecButtonState extends State<IncDecButton>
     with TickerProviderStateMixin {
   AnimationController _scaleController;
   Animation<double> _scale;
@@ -27,20 +27,20 @@ class IncDecButtonState extends State<IncDecButton>
   Color _newColor;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    _scaleController = new AnimationController(
+    _scaleController = AnimationController(
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
         vsync: this);
-    _scale = NonNegativeTween(begin: animationStart, end: 1.0).animate(CurvedAnimation(
+    _scale = NonNegativeTween<double>(begin: animationStart, end: 1.0).animate(CurvedAnimation(
         parent: _scaleController, curve: Curves.easeInOut));
     _scaleController.forward();
-    _colorController = new AnimationController(
+    _colorController = AnimationController(
       duration: Constants.durationAnimationMedium,
       vsync: this
     );
-    _color = new CurvedAnimation(parent: _colorController, curve: Curves.easeInOut);
+    _color = CurvedAnimation(parent: _colorController, curve: Curves.easeInOut);
     _colorController.addListener(() {
       if (_colorController.status == AnimationStatus.completed) {
         _colorController.value = 0.0;
@@ -62,7 +62,7 @@ class IncDecButtonState extends State<IncDecButton>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isBlurred
+    final Color color = widget.isBlurred
         ? Theme
         .of(context)
         .primaryColor
@@ -88,7 +88,7 @@ class IncDecButtonState extends State<IncDecButton>
           radius: 80,
           child: AnimatedBuilder(
             animation: _color,
-            builder: (context, _) => Material(
+            builder: (BuildContext context, _) => Material(
                 color: ColorTween(begin: _oldColor, end: color).lerp(_color.value),
                 child: Row(children: <Widget>[
                   DecreaseButton(
@@ -105,12 +105,13 @@ class IncDecButtonState extends State<IncDecButton>
 }
 
 class IncreaseButton extends StatefulWidget {
+  IncreaseButton({@required this.value, @required this.onIncrease, bool isInverted})
+      : isInverted = isInverted != null ? isInverted : false;
+
   final double value;
   final VoidCallback onIncrease;
   final bool isInverted;
 
-  IncreaseButton({@required this.value, @required this.onIncrease, isInverted})
-  : this.isInverted = isInverted != null ? isInverted : false;
   @override
   _IncreaseButtonState createState() => _IncreaseButtonState();
 }
@@ -122,13 +123,13 @@ class _IncreaseButtonState extends State<IncreaseButton>
   Animation<double> _plus;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    _plusController = new AnimationController(
+    _plusController = AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
     _plus =
-    new CurvedAnimation(parent: _plusController, curve: Curves.decelerate)
-      ..addStatusListener((status) {
+    CurvedAnimation(parent: _plusController, curve: Curves.decelerate)
+      ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.dismissed) {
           _plusController.forward();
         }
@@ -146,7 +147,8 @@ class _IncreaseButtonState extends State<IncreaseButton>
   @override
   Widget build(BuildContext context) {
     if (oldValue != widget.value) {
-      if (oldValue < widget.value) _plusController.reverse();
+      if (oldValue < widget.value)
+        _plusController.reverse();
       oldValue = widget.value;
     }
     return ScaleTransition(
@@ -155,17 +157,18 @@ class _IncreaseButtonState extends State<IncreaseButton>
           onPressed: widget.onIncrease,
           tooltip: Constants.textTooltipTextSizePlus,
         ),
-        scale: Tween(begin: 1.3, end: 1.0).animate(_plus));
+        scale: Tween<double>(begin: 1.3, end: 1.0).animate(_plus));
   }
 }
 
 class DecreaseButton extends StatefulWidget {
+  DecreaseButton({@required this.value, @required this.onDecrease, bool isInverted})
+      : isInverted = isInverted != null ? isInverted : false;
+
   final double value;
   final VoidCallback onDecrease;
   final bool isInverted;
 
-  DecreaseButton({@required this.value, @required this.onDecrease, isInverted})
-      : this.isInverted = isInverted != null ? isInverted : false;
   @override
   _DecreaseButtonState createState() => _DecreaseButtonState();
 }
@@ -177,13 +180,13 @@ class _DecreaseButtonState extends State<DecreaseButton>
   Animation<double> _minus;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    _minusController = new AnimationController(
+    _minusController = AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
     _minus =
-    new CurvedAnimation(parent: _minusController, curve: Curves.decelerate)
-      ..addStatusListener((status) {
+    CurvedAnimation(parent: _minusController, curve: Curves.decelerate)
+      ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.dismissed) {
           _minusController.forward();
         }
@@ -201,7 +204,8 @@ class _DecreaseButtonState extends State<DecreaseButton>
   @override
   Widget build(BuildContext context) {
     if (oldValue != widget.value) {
-      if (oldValue > widget.value) _minusController.reverse();
+      if (oldValue > widget.value)
+        _minusController.reverse();
       oldValue = widget.value;
     }
     return ScaleTransition(
@@ -210,6 +214,6 @@ class _DecreaseButtonState extends State<DecreaseButton>
           onPressed: widget.onDecrease,
           tooltip: Constants.textTooltipTextSizeLess,
         ),
-        scale: Tween(begin: 0.7, end: 1.0).animate(_minus));
+        scale: Tween<double>(begin: 0.7, end: 1.0).animate(_minus));
   }
 }

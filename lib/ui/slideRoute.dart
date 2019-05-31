@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kalil_widgets/constants.dart';
 
 class SlideRoute<T> extends MaterialPageRoute<T> {
-  final Duration duration;
   SlideRoute({WidgetBuilder builder, RouteSettings settings, Duration duration})
-      : this.duration = (duration != null) ? duration : Constants.durationAnimationRoute,
+      : duration = (duration != null) ? duration : Constants.durationAnimationRoute,
         super(builder: builder, settings: settings);
+  final Duration duration;
 
   @override
   Duration get transitionDuration => duration;
@@ -13,8 +13,8 @@ class SlideRoute<T> extends MaterialPageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    Animation<double> curved =
-    new CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+    final Animation<double> curved =
+    CurvedAnimation(parent: animation, curve: Curves.easeInOut);
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(-1.0, 0.0),

@@ -1,12 +1,26 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'blurOverlay.dart';
-import 'animatedGradientContainer.dart';
-import 'nonNegativeTween.dart';
 import '../constants.dart';
+import 'animatedGradientContainer.dart';
+import 'blurOverlay.dart';
+import 'nonNegativeTween.dart';
 
 class BiStateFAB extends StatefulWidget {
+  BiStateFAB(
+      {@required this.onPressed,
+        @required this.isBlurred,
+        @required this.isEnabled,
+        IconData enabledIcon,
+        IconData disabledIcon,
+        this.enabledColor,
+        this.disabledColor,
+        this.disabledColorBrightness})
+      : icons = <IconData>[
+    (enabledIcon != null) ? enabledIcon : Icons.favorite,
+    (disabledIcon != null) ? disabledIcon : Icons.favorite_border
+  ];
+
   final VoidCallback onPressed;
   final bool isBlurred;
   final bool isEnabled;
@@ -15,21 +29,8 @@ class BiStateFAB extends StatefulWidget {
   final Color enabledColor;
   final Brightness disabledColorBrightness;
 
-  BiStateFAB(
-      {@required this.onPressed,
-      @required this.isBlurred,
-      @required this.isEnabled,
-      IconData enabledIcon,
-      IconData disabledIcon,
-      this.enabledColor,
-      this.disabledColor,
-      this.disabledColorBrightness})
-      : this.icons = [
-          (enabledIcon != null) ? enabledIcon : Icons.favorite,
-          (disabledIcon != null) ? disabledIcon : Icons.favorite_border
-        ];
-
-  createState() => _BiStateFABState();
+  @override
+  _BiStateFABState createState() => _BiStateFABState();
 }
 
 class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
@@ -42,21 +43,20 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _scaleController = new AnimationController(
+    _scaleController = AnimationController(
         duration: Constants.durationAnimationRoute +
             Constants.durationAnimationMedium,
         vsync: this);
-    _iconController = new AnimationController(
+    _iconController = AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
 
-    _scale = NonNegativeTween(begin: animationStart, end: 1.0).animate(
+    _scale = NonNegativeTween<double>(begin: animationStart, end: 1.0).animate(
         CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
-    _iconScale =
-        new CurvedAnimation(parent: _iconController, curve: Curves.easeInOut);
+    _iconScale = CurvedAnimation(parent: _iconController, curve: Curves.easeInOut);
 
     _scaleController.forward();
     _iconController.value = 1.0;
-    Future.delayed(
+    Future<void>.delayed(
         Constants.durationAnimationRoute + Constants.durationAnimationMedium,
         () => _iconController.notifyStatusListeners(AnimationStatus.completed));
   }
@@ -79,7 +79,7 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
     if (widget.isEnabled) {
       _iconController.notifyStatusListeners(AnimationStatus.completed);
     }
-    _iconScale.addStatusListener((status) {
+    _iconScale.addStatusListener((AnimationStatus status) {
       if(!disposed) {
         if (widget.isEnabled) {
           if (status == AnimationStatus.completed) {
@@ -93,9 +93,9 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
       }
     });
 
-    final enabledColor = widget?.enabledColor ?? Colors.red;
-    final disabledColor = widget?.disabledColor ?? Theme.of(context).primaryColor;
-    final disabledColorBrightness = widget?.disabledColorBrightness ?? Theme.of(context).primaryColorBrightness;
+    final Color enabledColor = widget?.enabledColor ?? Colors.red;
+    final Color disabledColor = widget?.disabledColor ?? Theme.of(context).primaryColor;
+    final Brightness disabledColorBrightness = widget?.disabledColorBrightness ?? Theme.of(context).primaryColorBrightness;
     return ScaleTransition(
       scale: _scale,
       child: Material(
@@ -109,21 +109,21 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
                     Theme.of(context).backgroundColor.withAlpha(150),
                     disabledColor.withAlpha(150)
                   ]
-                : [
+                : <Color>[
                     Theme.of(context).backgroundColor,
                     disabledColor
                   ],
-            trueValues: [1.0, 2.0],
-            falseValues: [-1.0, 0.0],
+            trueValues: const <double>[1.0, 2.0],
+            falseValues: const <double>[-1.0, 0.0],
             isEnabled: widget.isEnabled,
             child: FloatingActionButton(
               backgroundColor: Colors.transparent,
               elevation: 0.0,
               child: ScaleTransition(
                 scale: widget.isEnabled
-                    ? Tween(begin: 0.7, end: 1.3).animate(_iconScale)
-                    : Tween(
-                            begin: Tween(begin: 0.7, end: 1.3)
+                    ? Tween<double>(begin: 0.7, end: 1.3).animate(_iconScale)
+                    : Tween<double>(
+                            begin: Tween<double>(begin: 0.7, end: 1.3)
                                 .animate(_iconScale)
                                 .value,
                             end: 1.0)

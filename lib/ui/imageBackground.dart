@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'blurOverlay.dart';
 import 'package:transformer_page_view/parallax.dart';
+import 'blurOverlay.dart';
 
 class ImageBackground extends StatelessWidget {
   const ImageBackground({
@@ -26,7 +26,7 @@ class ImageBackground extends StatelessWidget {
           child: BlurOverlay.roundedRect(
               child: img != 'null'
                   ? ParallaxImage.cachedNetwork(img, position: position)
-                  : SizedBox(),
+                  : const SizedBox(),
               radius: 20,
               enabled: enabled));
     });

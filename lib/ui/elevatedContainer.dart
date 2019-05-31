@@ -4,6 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:kalil_widgets/constants.dart';
 
 class ElevatedContainer extends StatelessWidget {
+  ElevatedContainer(
+      {Key key,
+        this.alignment,
+        this.padding,
+        double width,
+        double height,
+        BoxConstraints constraints,
+        this.margin,
+        this.transform,
+        this.child,
+        this.backgroundColor,
+        BorderRadius borderRadius,
+        Color elevatedColor,
+        @required this.elevation})
+      : assert(margin == null || margin.isNonNegative),
+        assert(padding == null || padding.isNonNegative),
+        assert(constraints == null || constraints.debugAssertIsValid()),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+            BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
+        elevatedColor =
+        elevatedColor != null ? elevatedColor : const Color(0x50000000),
+        borderRadius =
+        borderRadius != null ? borderRadius : BorderRadius.circular(20.0),
+        super(key: key);
+
   final Widget child;
   final double elevation;
   final Color backgroundColor;
@@ -15,48 +42,22 @@ class ElevatedContainer extends StatelessWidget {
   final Matrix4 transform;
   final BorderRadius borderRadius;
 
-  ElevatedContainer(
-      {Key key,
-      this.alignment,
-      this.padding,
-      double width,
-      double height,
-      BoxConstraints constraints,
-      this.margin,
-      this.transform,
-      this.child,
-      this.backgroundColor,
-      BorderRadius borderRadius,
-      Color elevatedColor,
-      @required this.elevation})
-      : assert(margin == null || margin.isNonNegative),
-        assert(padding == null || padding.isNonNegative),
-        assert(constraints == null || constraints.debugAssertIsValid()),
-        constraints = (width != null || height != null)
-            ? constraints?.tighten(width: width, height: height) ??
-                BoxConstraints.tightFor(width: width, height: height)
-            : constraints,
-        this.elevatedColor =
-            elevatedColor != null ? elevatedColor : Color(0x50000000),
-        this.borderRadius =
-            borderRadius != null ? borderRadius : BorderRadius.circular(20.0),
-        super(key: key);
-
   double get alpha {
     if (Constants.guidelinesDarkElevation.containsKey(elevation)) {
       return Constants.guidelinesDarkElevation[elevation.floor()].toDouble();
     } else {
-      List<double> keyList = [];
-      Constants.guidelinesDarkElevation.keys
-          .forEach((int) => keyList.add(int.toDouble()));
+      final List<double> keyList = <double>[];
+      for (int i in Constants.guidelinesDarkElevation.keys) {
+        keyList.add(i.toDouble());
+      }
       keyList.add(elevation);
       keyList.sort();
-      final before = keyList[keyList.indexOf(elevation) - 1];
-      final after = keyList[keyList.indexOf(elevation) + 1];
-      final ratio = (elevation - before) / (after - before);
+      final double before = keyList[keyList.indexOf(elevation) - 1];
+      final double after = keyList[keyList.indexOf(elevation) + 1];
+      final double ratio = (elevation - before) / (after - before);
 
-      double k = -4;
-      final curvedRatio = (1 - math.pow(math.e, k * ratio));
+      const double k = -4;
+      final double curvedRatio = 1 - math.pow(math.e, k * ratio);
       // Interpolate between the previous and next value with the curve i want
       return Constants
           .guidelinesDarkElevation[keyList[keyList.indexOf(elevation) - 1]] +

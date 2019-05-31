@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kalil_widgets/constants.dart';
 
 class FadeRoute<T> extends MaterialPageRoute<T> {
-  final Duration duration;
   FadeRoute({WidgetBuilder builder, RouteSettings settings, Duration duration})
-      : this.duration = (duration != null) ? duration : Constants.durationAnimationRoute,
+      : duration = (duration != null) ? duration : Constants.durationAnimationRoute,
         super(builder: builder, settings: settings);
+  final Duration duration;
 
   @override
   Duration get transitionDuration => duration;
@@ -13,17 +13,16 @@ class FadeRoute<T> extends MaterialPageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    Animation<double> curved =
-    new CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+    final Animation<double> curved = CurvedAnimation(parent: animation, curve: Curves.easeInOut);
     if (animation.status == AnimationStatus.reverse) {
       if (curved.value > 0.9) {
         return ScaleTransition(
-            scale: Tween(begin: 0.0, end: 1.0).animate(curved), child: child);
+            scale: Tween<double>(begin: 0.0, end: 1.0).animate(curved), child: child);
       } else {
         return FadeTransition(
-          opacity: Tween(begin: 0.0, end: 1.0 / 0.9 * 1.0).animate(curved),
+          opacity: Tween<double>(begin: 0.0, end: 1.0 / 0.9 * 1.0).animate(curved),
           child: ScaleTransition(
-              scale: Tween(begin: 0.0, end: 1.0).animate(curved), child: child),
+              scale: Tween<double>(begin: 0.0, end: 1.0).animate(curved), child: child),
         );
       }
     }
