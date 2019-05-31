@@ -13,9 +13,9 @@ enum PlayerState { stopped, playing, paused }
 class PlaybackButton extends StatefulWidget {
   const PlaybackButton(
       {@required this.url,
-        this.isLocal = false,
-        this.mode = PlayerMode.MEDIA_PLAYER,
-        @required this.isBlurred});
+      this.isLocal = false,
+      this.mode = PlayerMode.MEDIA_PLAYER,
+      @required this.isBlurred});
 
   final String url;
   final bool isLocal;
@@ -52,7 +52,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
     _playController = AnimationController(
         vsync: this, duration: Constants.durationAnimationShort);
     _playAnim =
-    CurvedAnimation(parent: _playController, curve: Curves.easeInOut);
+        CurvedAnimation(parent: _playController, curve: Curves.easeInOut);
     _playController.value = 0.0;
     _scaleController = AnimationController(
         duration: Constants.durationAnimationMedium +
@@ -65,8 +65,8 @@ class _PlaybackButtonState extends State<PlaybackButton>
 
   double get animationStart =>
       0 -
-          (Constants.durationAnimationRoute.inMilliseconds /
-              Constants.durationAnimationMedium.inMilliseconds);
+      (Constants.durationAnimationRoute.inMilliseconds /
+          Constants.durationAnimationMedium.inMilliseconds);
 
   @override
   void dispose() {
@@ -85,7 +85,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
     final double playbackProportion = _position != null && _duration != null
         ? _position.inMilliseconds / _duration.inMilliseconds
         : 0.0;
-    final Color color = Theme.of(context).primaryColorBrightness == Brightness.light ? Colors.black : Theme.of(context).iconTheme.color;
+    final Color color = Theme.of(context).colorScheme.onPrimary;
     return ScaleTransition(
         scale: _scale,
         child: Material(
@@ -100,33 +100,45 @@ class _PlaybackButtonState extends State<PlaybackButton>
                   gradient: LinearGradient(
                       colors: widget.isBlurred
                           ? <Color>[
-                        Colors.red.shade900.withAlpha(150),
-                        Theme
-                            .of(context)
-                            .primaryColor
-                            .withAlpha(150)
-                      ]
-                          : <Color>[Colors.red.shade900, Theme
-                          .of(context)
-                          .primaryColor
-                      ],
-                      stops: <double>[-1 + playbackProportion, 2 * playbackProportion
-                      ])),
+                              Theme.of(context)
+                                  .colorScheme
+                                  .error
+                                  .withAlpha(150),
+                              Theme.of(context).primaryColor.withAlpha(150)
+                            ]
+                          : <Color>[
+                              Theme.of(context).colorScheme.error,
+                              Theme.of(context).primaryColor
+                            ],
+                      stops: <double>[
+                    -0.1 + playbackProportion,
+                    0.1 + playbackProportion
+                  ])),
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
                   Material(
                     color: Colors.transparent,
                     child: InkWell(
-                        child: Center(
-                            child: _playerState == PlayerState.stopped
-                                ? Icon(playbackProportion == 0.0
-                                    ? Icons.play_arrow
-                                : Icons.refresh, color: color)
-                                : AnimatedIcon(
-                                icon: AnimatedIcons.play_pause,
-                                progress: _playAnim,
-                                color: color)),
+                      child: Center(
+                          child: _playerState == PlayerState.stopped
+                              ? Icon(
+                                  playbackProportion == 0.0
+                                      ? Icons.play_arrow
+                                      : Icons.refresh,
+                                  color: color)
+                              : playbackProportion == 0.0
+                                  ? Container(
+                                      height: 28,
+                                      width: 28,
+                                      child: Theme(
+                                          data: Theme.of(context).copyWith(
+                                              accentColor: color),
+                                          child: const CircularProgressIndicator()))
+                                  : AnimatedIcon(
+                                      icon: AnimatedIcons.play_pause,
+                                      progress: _playAnim,
+                                      color: color)),
                       onTap: _isPlaying ? _pause : _play,
                     ),
                   ),
@@ -139,10 +151,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
                       child: Container(
                           height: 15,
                           child: SliderTheme(
-                            data: Theme
-                                .of(context)
-                                .sliderTheme
-                                .copyWith(
+                            data: Theme.of(context).sliderTheme.copyWith(
                                 trackHeight: 15.0,
                                 activeTrackColor: Colors.transparent,
                                 inactiveTrackColor: Colors.transparent,
@@ -150,16 +159,14 @@ class _PlaybackButtonState extends State<PlaybackButton>
                             child: Slider(
                               max: _duration?.inMilliseconds?.toDouble() ?? 1.0,
                               value: (_position != null &&
-                                  _duration != null &&
-                                  _position.inMilliseconds > 0 &&
-                                  _position.inMilliseconds <
-                                      _duration.inMilliseconds)
+                                      _duration != null &&
+                                      _position.inMilliseconds > 0 &&
+                                      _position.inMilliseconds <
+                                          _duration.inMilliseconds)
                                   ? _position.inMilliseconds.toDouble()
                                   : 0.0,
-                              onChanged: (double value) =>
-                                  _audioPlayer
-                                      .seek(
-                                      Duration(milliseconds: value.round())),
+                              onChanged: (double value) => _audioPlayer
+                                  .seek(Duration(milliseconds: value.round())),
                             ),
                           ))),
                 ],
@@ -178,8 +185,8 @@ class _PlaybackButtonState extends State<PlaybackButton>
   void _initAudioPlayer() {
     _audioPlayer = AudioPlayer(mode: widget.mode);
 
-    _durationSubscription =
-        _audioPlayer.onDurationChanged.listen((Duration duration) => setState(() {
+    _durationSubscription = _audioPlayer.onDurationChanged
+        .listen((Duration duration) => setState(() {
               _duration = duration;
             }));
 
@@ -188,8 +195,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
               _position = p;
             }));
 
-    _playerCompleteSubscription =
-        _audioPlayer.onPlayerCompletion.listen((_) {
+    _playerCompleteSubscription = _audioPlayer.onPlayerCompletion.listen((_) {
       _onComplete();
       setState(() {
         _position = _duration;
@@ -209,9 +215,9 @@ class _PlaybackButtonState extends State<PlaybackButton>
   Future<int> _play() async {
     HapticFeedback.selectionClick();
     final Duration playPosition = (_position != null &&
-        _duration != null &&
-        _position.inMilliseconds > 0 &&
-        _position.inMilliseconds < _duration.inMilliseconds)
+            _duration != null &&
+            _position.inMilliseconds > 0 &&
+            _position.inMilliseconds < _duration.inMilliseconds)
         ? _position
         : null;
     _playController.forward();

@@ -92,9 +92,9 @@ class _IncDecButtonState extends State<IncDecButton>
                 color: ColorTween(begin: _oldColor, end: color).lerp(_color.value),
                 child: Row(children: <Widget>[
                   DecreaseButton(
-                      value: widget.value, onDecrease: widget.onDecrease, isInverted: true,),
+                      value: widget.value, onDecrease: widget.onDecrease, color: Theme.of(context).colorScheme.onPrimary),
                   IncreaseButton(
-                      value: widget.value, onIncrease: widget.onIncrease, isInverted: true,),
+                      value: widget.value, onIncrease: widget.onIncrease, color: Theme.of(context).colorScheme.onPrimary),
                 ]),
               )
           ),
@@ -105,12 +105,11 @@ class _IncDecButtonState extends State<IncDecButton>
 }
 
 class IncreaseButton extends StatefulWidget {
-  IncreaseButton({@required this.value, @required this.onIncrease, bool isInverted})
-      : isInverted = isInverted != null ? isInverted : false;
+  const IncreaseButton({@required this.value, @required this.onIncrease, @required this.color});
 
   final double value;
   final VoidCallback onIncrease;
-  final bool isInverted;
+  final Color color;
 
   @override
   _IncreaseButtonState createState() => _IncreaseButtonState();
@@ -153,7 +152,7 @@ class _IncreaseButtonState extends State<IncreaseButton>
     }
     return ScaleTransition(
         child: IconButton(
-          icon: Icon(Icons.arrow_upward, color: Theme.of(context).primaryColorBrightness == Brightness.light && widget.isInverted ? Colors.black : Theme.of(context).iconTheme.color),
+          icon: Icon(Icons.arrow_upward, color: widget.color),
           onPressed: widget.onIncrease,
           tooltip: Constants.textTooltipTextSizePlus,
         ),
@@ -162,12 +161,11 @@ class _IncreaseButtonState extends State<IncreaseButton>
 }
 
 class DecreaseButton extends StatefulWidget {
-  DecreaseButton({@required this.value, @required this.onDecrease, bool isInverted})
-      : isInverted = isInverted != null ? isInverted : false;
+  const DecreaseButton({@required this.value, @required this.onDecrease, @required this.color});
 
   final double value;
   final VoidCallback onDecrease;
-  final bool isInverted;
+  final Color color;
 
   @override
   _DecreaseButtonState createState() => _DecreaseButtonState();
@@ -210,7 +208,7 @@ class _DecreaseButtonState extends State<DecreaseButton>
     }
     return ScaleTransition(
         child: IconButton(
-          icon: Icon(Icons.arrow_downward, color: Theme.of(context).primaryColorBrightness == Brightness.light && widget.isInverted ? Colors.black : Theme.of(context).iconTheme.color),
+          icon: Icon(Icons.arrow_downward, color: widget.color),
           onPressed: widget.onDecrease,
           tooltip: Constants.textTooltipTextSizeLess,
         ),

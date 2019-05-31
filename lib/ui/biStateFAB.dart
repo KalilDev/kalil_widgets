@@ -15,7 +15,7 @@ class BiStateFAB extends StatefulWidget {
         IconData disabledIcon,
         this.enabledColor,
         this.disabledColor,
-        this.disabledColorBrightness})
+        this.iconColor})
       : icons = <IconData>[
     (enabledIcon != null) ? enabledIcon : Icons.favorite,
     (disabledIcon != null) ? disabledIcon : Icons.favorite_border
@@ -27,7 +27,7 @@ class BiStateFAB extends StatefulWidget {
   final List<IconData> icons;
   final Color disabledColor;
   final Color enabledColor;
-  final Brightness disabledColorBrightness;
+  final Color iconColor;
 
   @override
   _BiStateFABState createState() => _BiStateFABState();
@@ -93,9 +93,9 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
       }
     });
 
-    final Color enabledColor = widget?.enabledColor ?? Colors.red;
+    final Color enabledColor = widget?.enabledColor ?? Theme.of(context).colorScheme.error;
     final Color disabledColor = widget?.disabledColor ?? Theme.of(context).primaryColor;
-    final Brightness disabledColorBrightness = widget?.disabledColorBrightness ?? Theme.of(context).primaryColorBrightness;
+    final Color iconColor = widget?.iconColor ?? Theme.of(context).colorScheme.onSecondary;
     return ScaleTransition(
       scale: _scale,
       child: Material(
@@ -132,10 +132,7 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
                     widget.isEnabled ? widget.icons[0] : widget.icons[1],
                     color: widget.isEnabled
                         ? enabledColor
-                        : disabledColorBrightness ==
-                                Brightness.light
-                            ? Theme.of(context).backgroundColor
-                            : Theme.of(context).iconTheme.color),
+                        : iconColor)
               ),
               onPressed: widget.onPressed,
               tooltip: Constants.textTooltipFav,
