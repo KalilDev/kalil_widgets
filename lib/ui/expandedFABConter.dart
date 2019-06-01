@@ -18,79 +18,83 @@ class ExpandedFABCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Material(
-          color: Colors.transparent,
-          elevation: 16.0,
-          child: BlurOverlay.roundedRect(
-            enabled: isBlurred,
-            radius: 80,
+    return DefaultTextStyle(
+      style: Theme
+          .of(context)
+          .textTheme
+          .title
+          .copyWith(
+          color: getTextColor(0.87, bg: Theme
+              .of(context)
+              .colorScheme
+              .background, main: Theme
+              .of(context)
+              .colorScheme
+              .onSecondary)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Material(
             color: Colors.transparent,
-            child: AnimatedGradientContainer(
-              colors: isBlurred
-                  ? <Color>[
-                Theme
-                    .of(context)
-                    .colorScheme
-                    .error
-                    .withAlpha(180),
-                Theme
-                    .of(context)
-                    .accentColor
-                    .withAlpha(150)
-              ]
-                  : <Color>[
-                Theme
-                    .of(context)
-                    .colorScheme
-                    .error,
-                Theme
-                    .of(context)
-                    .accentColor
-              ],
-              isEnabled: isEnabled,
-              height: 50,
-              child: RaisedButton(
-                  elevation: 0.0,
-                  highlightElevation: 0.0,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const SizedBox(width: 16.0),
-                      Icon(
-                          isEnabled
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: Theme
-                              .of(context)
-                              .colorScheme
-                              .onSecondary),
-                      const SizedBox(width: 8.0),
-                      Text(counter.toString() + ' ' + textFavs,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .title
-                              .copyWith(
-                              color: getTextColor(0.87, bg: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .background, main: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .onSecondary))),
-                      const SizedBox(width: 16.0),
-                    ],
-                  ),
-                  color: Colors.transparent,
-                  onPressed: onPressed),
+            elevation: 16.0,
+            child: BlurOverlay.roundedRect(
+              enabled: isBlurred,
+              radius: 80,
+              color: Colors.transparent,
+              child: AnimatedGradientContainer(
+                colors: isBlurred
+                    ? <Color>[
+                  Theme
+                      .of(context)
+                      .colorScheme
+                      .error
+                      .withAlpha(180),
+                  Theme
+                      .of(context)
+                      .accentColor
+                      .withAlpha(150)
+                ]
+                    : <Color>[
+                  Theme
+                      .of(context)
+                      .colorScheme
+                      .error,
+                  Theme
+                      .of(context)
+                      .accentColor
+                ],
+                isEnabled: isEnabled,
+                height: 50,
+                child: RaisedButton(
+                    elevation: 0.0,
+                    highlightElevation: 0.0,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const SizedBox(width: 16.0),
+                        Icon(
+                            isEnabled
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: Theme
+                                .of(context)
+                                .colorScheme
+                                .onSecondary),
+                        const SizedBox(width: 8.0),
+                        Text(counter.toString()),
+                        const SizedBox(width: 3.0),
+                        const Text(textFavs),
+                        const SizedBox(width: 16.0),
+                      ],
+                    ),
+                    color: Colors.transparent,
+                    onPressed: onPressed),
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 25.0)
-      ],
+          const SizedBox(height: 25.0)
+        ],
+      ),
     );
   }
 }
