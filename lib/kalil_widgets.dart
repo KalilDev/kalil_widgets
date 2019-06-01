@@ -14,8 +14,8 @@ export 'package:kalil_widgets/ui/fadeRoute.dart';
 export 'package:kalil_widgets/ui/imageBackground.dart';
 /// Menu button that replicates appbar menu button behavior
 export 'package:kalil_widgets/ui/menuButton.dart';
-/// Pageroute that slides from the left
-export 'package:kalil_widgets/ui/slideRoute.dart';
+/// MaterialPageRoute that allows custom duration
+export 'package:kalil_widgets/ui/durationMaterialPageRoute.dart';
 /// + Button, - Button, and a pill that has both
 export 'package:kalil_widgets/ui/incDecButtons.dart';
 /// FAB that can have an enabled and a disabled state, and animates on changes
@@ -23,3 +23,5 @@ export 'package:kalil_widgets/ui/incDecButtons.dart';
 export 'package:kalil_widgets/ui/biStateFAB.dart';
 /// Button that plays a music
 export 'package:kalil_widgets/ui/playbackButton.dart';
+/// ExpandedFAB with an counter, icon and gradient. Looks really cool.
+export 'package:kalil_widgets/ui/expandedFABConter.dart';

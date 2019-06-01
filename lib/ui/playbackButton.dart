@@ -50,13 +50,13 @@ class _PlaybackButtonState extends State<PlaybackButton>
     super.initState();
     _initAudioPlayer();
     _playController = AnimationController(
-        vsync: this, duration: Constants.durationAnimationShort);
+        vsync: this, duration: durationAnimationShort);
     _playAnim =
         CurvedAnimation(parent: _playController, curve: Curves.easeInOut);
     _playController.value = 0.0;
     _scaleController = AnimationController(
-        duration: Constants.durationAnimationMedium +
-            Constants.durationAnimationRoute,
+        duration: durationAnimationMedium +
+            durationAnimationRoute,
         vsync: this);
     _scale = NonNegativeTween<double>(begin: animationStart, end: 1.0).animate(
         CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
@@ -65,8 +65,8 @@ class _PlaybackButtonState extends State<PlaybackButton>
 
   double get animationStart =>
       0 -
-      (Constants.durationAnimationRoute.inMilliseconds /
-          Constants.durationAnimationMedium.inMilliseconds);
+      (durationAnimationRoute.inMilliseconds /
+          durationAnimationMedium.inMilliseconds);
 
   @override
   void dispose() {
@@ -210,8 +210,8 @@ class _PlaybackButtonState extends State<PlaybackButton>
       print('audioPlayer error : $msg');
       setState(() {
         _playerState = PlayerState.stopped;
-        _duration = Duration(seconds: 0);
-        _position = Duration(seconds: 0);
+        _duration = const Duration(seconds: 0);
+        _position = const Duration(seconds: 0);
       });
     });
   }

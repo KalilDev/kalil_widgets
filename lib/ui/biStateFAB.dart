@@ -44,11 +44,11 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _scaleController = AnimationController(
-        duration: Constants.durationAnimationRoute +
-            Constants.durationAnimationMedium,
+        duration: durationAnimationRoute +
+            durationAnimationMedium,
         vsync: this);
     _iconController = AnimationController(
-        duration: Constants.durationAnimationMedium, vsync: this);
+        duration: durationAnimationMedium, vsync: this);
 
     _scale = NonNegativeTween<double>(begin: animationStart, end: 1.0).animate(
         CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
@@ -57,7 +57,7 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
     _scaleController.forward();
     _iconController.value = 1.0;
     Future<void>.delayed(
-        Constants.durationAnimationRoute + Constants.durationAnimationMedium,
+        durationAnimationRoute + durationAnimationMedium,
         () => _iconController.notifyStatusListeners(AnimationStatus.completed));
   }
 
@@ -71,8 +71,8 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
 
   double get animationStart =>
       0 -
-      (Constants.durationAnimationRoute.inMilliseconds /
-          Constants.durationAnimationMedium.inMilliseconds);
+      (durationAnimationRoute.inMilliseconds /
+          durationAnimationMedium.inMilliseconds);
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +135,7 @@ class _BiStateFABState extends State<BiStateFAB> with TickerProviderStateMixin {
                         : iconColor)
               ),
               onPressed: widget.onPressed,
-              tooltip: Constants.textTooltipFav,
+              tooltip: textTooltipFav,
             ),
           ),
         ),

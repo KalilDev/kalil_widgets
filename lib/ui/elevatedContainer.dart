@@ -43,11 +43,11 @@ class ElevatedContainer extends StatelessWidget {
   final BorderRadius borderRadius;
 
   double get alpha {
-    if (Constants.guidelinesDarkElevation.containsKey(elevation)) {
-      return Constants.guidelinesDarkElevation[elevation.floor()].toDouble();
+    if (guidelinesDarkElevation.containsKey(elevation)) {
+      return guidelinesDarkElevation[elevation.floor()].toDouble();
     } else {
       final List<double> keyList = <double>[];
-      for (int i in Constants.guidelinesDarkElevation.keys) {
+      for (int i in guidelinesDarkElevation.keys) {
         keyList.add(i.toDouble());
       }
       keyList.add(elevation);
@@ -59,11 +59,10 @@ class ElevatedContainer extends StatelessWidget {
       const double k = -4;
       final double curvedRatio = 1 - math.pow(math.e, k * ratio);
       // Interpolate between the previous and next value with the curve i want
-      return Constants
-          .guidelinesDarkElevation[keyList[keyList.indexOf(elevation) - 1]] +
-          (Constants.guidelinesDarkElevation[
+      return guidelinesDarkElevation[keyList[keyList.indexOf(elevation) - 1]] +
+          (guidelinesDarkElevation[
           keyList[keyList.indexOf(elevation) + 1]] -
-              Constants.guidelinesDarkElevation[
+              guidelinesDarkElevation[
               keyList[keyList.indexOf(elevation) - 1]]) *
               curvedRatio;
     }

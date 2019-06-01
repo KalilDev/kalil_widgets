@@ -30,14 +30,14 @@ class _IncDecButtonState extends State<IncDecButton>
   void initState() {
     super.initState();
     _scaleController = AnimationController(
-        duration: Constants.durationAnimationMedium +
-            Constants.durationAnimationRoute,
+        duration: durationAnimationMedium +
+            durationAnimationRoute,
         vsync: this);
     _scale = NonNegativeTween<double>(begin: animationStart, end: 1.0).animate(CurvedAnimation(
         parent: _scaleController, curve: Curves.easeInOut));
     _scaleController.forward();
     _colorController = AnimationController(
-      duration: Constants.durationAnimationMedium,
+      duration: durationAnimationMedium,
       vsync: this
     );
     _color = CurvedAnimation(parent: _colorController, curve: Curves.easeInOut);
@@ -57,8 +57,8 @@ class _IncDecButtonState extends State<IncDecButton>
 
   double get animationStart =>
       0 -
-          (Constants.durationAnimationRoute.inMilliseconds /
-          Constants.durationAnimationMedium.inMilliseconds);
+          (durationAnimationRoute.inMilliseconds /
+          durationAnimationMedium.inMilliseconds);
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +125,7 @@ class _IncreaseButtonState extends State<IncreaseButton>
   void initState() {
     super.initState();
     _plusController = AnimationController(
-        duration: Constants.durationAnimationMedium, vsync: this);
+        duration: durationAnimationMedium, vsync: this);
     _plus =
     CurvedAnimation(parent: _plusController, curve: Curves.decelerate)
       ..addStatusListener((AnimationStatus status) {
@@ -154,7 +154,7 @@ class _IncreaseButtonState extends State<IncreaseButton>
         child: IconButton(
           icon: Icon(Icons.arrow_upward, color: widget.color),
           onPressed: widget.onIncrease,
-          tooltip: Constants.textTooltipTextSizePlus,
+          tooltip: textTooltipTextSizePlus,
         ),
         scale: Tween<double>(begin: 1.3, end: 1.0).animate(_plus));
   }
@@ -181,7 +181,7 @@ class _DecreaseButtonState extends State<DecreaseButton>
   void initState() {
     super.initState();
     _minusController = AnimationController(
-        duration: Constants.durationAnimationMedium, vsync: this);
+        duration: durationAnimationMedium, vsync: this);
     _minus =
     CurvedAnimation(parent: _minusController, curve: Curves.decelerate)
       ..addStatusListener((AnimationStatus status) {
@@ -210,7 +210,7 @@ class _DecreaseButtonState extends State<DecreaseButton>
         child: IconButton(
           icon: Icon(Icons.arrow_downward, color: widget.color),
           onPressed: widget.onDecrease,
-          tooltip: Constants.textTooltipTextSizeLess,
+          tooltip: textTooltipTextSizeLess,
         ),
         scale: Tween<double>(begin: 0.7, end: 1.0).animate(_minus));
   }

@@ -11,7 +11,7 @@ class BlurOverlay extends StatefulWidget {
     this.intensity = 1.0,
     this.color,
     Duration duration})
-      : duration = (duration != null) ? duration : Constants.durationAnimationMedium,
+      : duration = (duration != null) ? duration : durationAnimationMedium,
         shape = Shape.Rect,
         radius = null,
         super(key: key);
@@ -23,7 +23,7 @@ class BlurOverlay extends StatefulWidget {
     this.color,
     @required this.radius,
     Duration duration})
-      : duration = (duration != null) ? duration : Constants.durationAnimationMedium,
+      : duration = (duration != null) ? duration : durationAnimationMedium,
         shape = Shape.RRect,
         super(key: key);
 
@@ -33,7 +33,7 @@ class BlurOverlay extends StatefulWidget {
     this.intensity = 1.0,
     this.color,
     Duration duration})
-      : duration = (duration != null) ? duration : Constants.durationAnimationMedium,
+      : duration = (duration != null) ? duration : durationAnimationMedium,
         shape = Shape.Oval,
         radius = null,
         super(key: key);

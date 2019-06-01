@@ -13,7 +13,7 @@ class AnimatedGradientContainer extends StatefulWidget {
     this.trueValues = const <double>[0.6, 1.0],
     this.falseValues = const <double>[0.0, 0.4],
     Duration duration,
-  }) : duration = (duration != null) ? duration : Constants.durationAnimationLong,
+  }) : duration = (duration != null) ? duration : durationAnimationLong,
        super(key: key);
 
   final bool isEnabled;
@@ -56,7 +56,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
     _controller.value = widget.isEnabled ? 1.0 : 0.0;
 
     _oldColors = widget.colors;
-    _onChangeController = AnimationController(vsync: this, duration: Constants.durationAnimationMedium);
+    _onChangeController = AnimationController(vsync: this, duration: durationAnimationMedium);
     _onChangeAnim = CurvedAnimation(parent: _onChangeController, curve: Curves.easeInOut);
     _onChangeController.addListener(() {
       if (_controller.status == AnimationStatus.completed || _controller.status == AnimationStatus.dismissed)

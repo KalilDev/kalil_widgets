@@ -3,7 +3,7 @@ import 'package:kalil_widgets/constants.dart';
 
 class FadeRoute<T> extends MaterialPageRoute<T> {
   FadeRoute({WidgetBuilder builder, RouteSettings settings, Duration duration})
-      : duration = (duration != null) ? duration : Constants.durationAnimationRoute,
+      : duration = (duration != null) ? duration : durationAnimationRoute,
         super(builder: builder, settings: settings);
   final Duration duration;
 

@@ -16,7 +16,7 @@ class NonNegativeTween<T extends dynamic> extends Animatable<T> {
 
   @override
   T transform(double t) {
-    final double k = Constants.durationAnimationMedium.inMilliseconds/Constants.durationAnimationRoute.inMilliseconds;
+    final double k = durationAnimationMedium.inMilliseconds/durationAnimationRoute.inMilliseconds;
     if (t == 0.0)
       return begin;
     if (t == 1.0)
