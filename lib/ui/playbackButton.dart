@@ -82,7 +82,11 @@ class _PlaybackButtonState extends State<PlaybackButton>
 
   @override
   Widget build(BuildContext context) {
-    final double playbackProportion = _position != null && _duration != null
+    final double playbackProportion = (_position != null &&
+        _duration != null &&
+        _position.inMilliseconds > 0 &&
+        _position.inMilliseconds <
+            _duration.inMilliseconds)
         ? _position.inMilliseconds / _duration.inMilliseconds
         : 0.0;
     final Color color = Theme.of(context).colorScheme.onPrimary;
@@ -238,6 +242,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
   }
 
   void _onComplete() {
-    setState(() => _playerState = PlayerState.stopped);
+    setState(() {
+      _playerState = PlayerState.stopped;});
   }
 }
