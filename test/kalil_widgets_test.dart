@@ -20,12 +20,13 @@ void main() {
       final BlurOverlay blur = tester.widget(blurFinder);
       return blur.enabled;
     }
-    
-    await tester.pumpWidget(MaterialApp(home: ExpandedFABCounter(
-        counter: counter,
-        isEnabled: counter > 0,
-        isBlurred: false,
-        onPressed: () => counter++)));
+
+    await tester.pumpWidget(MaterialApp(
+        home: ExpandedFABCounter(
+            counter: counter,
+            isEnabled: counter > 0,
+            isBlurred: false,
+            onPressed: () => counter++)));
     await tester.pumpAndSettle();
 
     // Find the favorites text
@@ -41,11 +42,12 @@ void main() {
     expect(messageFinder, findsOneWidget);
     await tester.tap(find.byType(RaisedButton));
 
-    await tester.pumpWidget(MaterialApp(home: ExpandedFABCounter(
-        counter: counter,
-        isEnabled: counter > 0,
-        isBlurred: false,
-        onPressed: () => counter--)));
+    await tester.pumpWidget(MaterialApp(
+        home: ExpandedFABCounter(
+            counter: counter,
+            isEnabled: counter > 0,
+            isBlurred: false,
+            onPressed: () => counter--)));
     await tester.pumpAndSettle();
 
     // Check counter
@@ -57,10 +59,9 @@ void main() {
     expect(isEnabled(), true);
 
     await tester.tap(find.byType(RaisedButton));
-    await tester.pumpWidget(MaterialApp(home: ExpandedFABCounter(
-        counter: counter,
-        isEnabled: counter > 0,
-        isBlurred: true)));
+    await tester.pumpWidget(MaterialApp(
+        home: ExpandedFABCounter(
+            counter: counter, isEnabled: counter > 0, isBlurred: true)));
     await tester.pumpAndSettle();
 
     // Check counter
@@ -70,6 +71,66 @@ void main() {
     // Check blur and gradient;
     expect(isBlurred(), true);
     expect(isEnabled(), false);
+  });
 
+  const double kElevation = 4.0;
+  testWidgets('Test Light elevatedContainer', (WidgetTester tester) async {
+    final BorderRadius radius = BorderRadius.circular(20.0);
+    await tester.pumpWidget(MaterialApp(
+        theme: ThemeData.light(),
+        home: ElevatedContainer(
+          elevation: kElevation,
+          borderRadius: radius,
+          child: const SizedBox(height: 50.0, width: 50.0),
+        )));
+
+    await expectLater(find.byType(ElevatedContainer),
+        matchesGoldenFile('lightElevatedContainer.png'));
+    expect(find.byType(PhysicalShape), findsOneWidget);
+  });
+
+  testWidgets('Test Dark elevatedContainer', (WidgetTester tester) async {
+    final BorderRadius radius = BorderRadius.circular(20.0);
+    await tester.pumpWidget(MaterialApp(
+        theme: ThemeData.dark(),
+        home: ElevatedContainer(
+          elevation: kElevation,
+          borderRadius: radius,
+          child: const SizedBox(height: 50.0, width: 50.0),
+        )));
+
+    await expectLater(find.byType(ElevatedContainer),
+        matchesGoldenFile('darkElevatedContainer.png'));
+    expect(find.byType(PhysicalShape), findsNothing);
+  });
+
+  test('Tests the materialCompliantElevation color', () {
+    expect(materialCompliantElevation(
+        brightness: ThemeData.light().brightness,
+        bg: ThemeData.light().backgroundColor,
+        elevation: 0.0), ThemeData.light().backgroundColor);
+
+    expect(materialCompliantElevation(
+        brightness: ThemeData.light().brightness,
+        bg: ThemeData.light().backgroundColor,
+        elevation: kElevation), ThemeData.light().backgroundColor);
+
+    expect(materialCompliantElevation(
+        brightness: ThemeData.dark().brightness,
+        bg: ThemeData.dark().backgroundColor,
+        elevation: 0.0), ThemeData.dark().backgroundColor);
+
+    expect(materialCompliantElevation(
+        brightness: ThemeData.dark().brightness,
+        bg: ThemeData.dark().backgroundColor,
+        elevation: kElevation), Color.alphaBlend(Colors.white.withAlpha((guidelinesDarkElevation[kElevation]*2.55).round()), ThemeData.dark().backgroundColor));
+
+    expect(materialCompliantElevation(
+        brightness: ThemeData.dark().brightness,
+        bg: ThemeData.dark().backgroundColor,
+        elevation: kElevation) == materialCompliantElevation(
+        brightness: ThemeData.dark().brightness,
+        bg: ThemeData.dark().backgroundColor,
+        elevation: kElevation+1.0), false);
   });
 }
