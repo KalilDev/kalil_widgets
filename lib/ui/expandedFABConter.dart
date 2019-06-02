@@ -18,82 +18,73 @@ class ExpandedFABCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: Theme
-          .of(context)
-          .textTheme
-          .title
-          .copyWith(
-          color: getTextColor(0.87, bg: Theme
-              .of(context)
-              .colorScheme
-              .background, main: Theme
-              .of(context)
-              .colorScheme
-              .onSecondary)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Material(
-            color: Colors.transparent,
-            elevation: 16.0,
-            child: BlurOverlay.roundedRect(
-              enabled: isBlurred,
-              radius: 80,
-              color: Colors.transparent,
-              child: AnimatedGradientContainer(
-                colors: isBlurred
-                    ? <Color>[
-                  Theme
-                      .of(context)
-                      .colorScheme
-                      .error
-                      .withAlpha(180),
-                  Theme
-                      .of(context)
-                      .accentColor
-                      .withAlpha(150)
-                ]
-                    : <Color>[
-                  Theme
-                      .of(context)
-                      .colorScheme
-                      .error,
-                  Theme
-                      .of(context)
-                      .accentColor
+    final TextStyle style = Theme
+        .of(context)
+        .textTheme
+        .title
+        .copyWith(
+        color: getTextColor(0.87, bg: Theme
+            .of(context)
+            .colorScheme
+            .background, main: Theme
+            .of(context)
+            .colorScheme
+            .onSecondary));
+    return Material(
+      color: Colors.transparent,
+      elevation: 16.0,
+      shape: StadiumBorder(),
+      child: BlurOverlay.roundedRect(
+        enabled: isBlurred,
+        radius: 80,
+        color: Colors.transparent,
+        child: AnimatedGradientContainer(
+          colors: isBlurred
+              ? <Color>[
+            Theme
+                .of(context)
+                .colorScheme
+                .error
+                .withAlpha(180),
+            Theme
+                .of(context)
+                .accentColor
+                .withAlpha(150)
+          ]
+              : <Color>[
+            Theme
+                .of(context)
+                .colorScheme
+                .error,
+            Theme
+                .of(context)
+                .accentColor
+          ],
+          isEnabled: isEnabled,
+          height: 50,
+          child: RawMaterialButton(
+              elevation: 0.0,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const SizedBox(width: 24.0),
+                  Icon(
+                      isEnabled
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .onSecondary),
+                  const SizedBox(width: 8.0),
+                  Text(counter.toString(), style: style),
+                  const SizedBox(width: 3.0),
+                  Text(textFavs, style: style),
+                  const SizedBox(width: 24.0),
                 ],
-                isEnabled: isEnabled,
-                height: 50,
-                child: RaisedButton(
-                    elevation: 0.0,
-                    highlightElevation: 0.0,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const SizedBox(width: 16.0),
-                        Icon(
-                            isEnabled
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .onSecondary),
-                        const SizedBox(width: 8.0),
-                        Text(counter.toString()),
-                        const SizedBox(width: 3.0),
-                        const Text(textFavs),
-                        const SizedBox(width: 16.0),
-                      ],
-                    ),
-                    color: Colors.transparent,
-                    onPressed: onPressed),
               ),
-            ),
-          ),
-          const SizedBox(height: 25.0)
-        ],
+              onPressed: onPressed),
+        ),
       ),
     );
   }

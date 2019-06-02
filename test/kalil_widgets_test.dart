@@ -35,12 +35,14 @@ void main() {
     // Check blur and gradient;
     expect(isBlurred(), false);
     expect(isEnabled(), false);
+    await expectLater(find.byType(ExpandedFABCounter),
+        matchesGoldenFile('000ExpandedFAB.png'));
 
     // Use the `findsOneWidget` matcher provided by flutter_test to verify our
     // Text Widgets appear exactly once in the Widget tree
     expect(counterFinder(), findsOneWidget);
     expect(messageFinder, findsOneWidget);
-    await tester.tap(find.byType(RaisedButton));
+    await tester.tap(find.byType(RawMaterialButton));
 
     await tester.pumpWidget(MaterialApp(
         home: ExpandedFABCounter(
@@ -49,6 +51,8 @@ void main() {
             isBlurred: false,
             onPressed: () => counter--)));
     await tester.pumpAndSettle();
+    await expectLater(find.byType(ExpandedFABCounter),
+        matchesGoldenFile('101ExpandedFAB.png'));
 
     // Check counter
     expect(counter, 1);
@@ -58,11 +62,13 @@ void main() {
     expect(isBlurred(), false);
     expect(isEnabled(), true);
 
-    await tester.tap(find.byType(RaisedButton));
+    await tester.tap(find.byType(RawMaterialButton));
     await tester.pumpWidget(MaterialApp(
         home: ExpandedFABCounter(
-            counter: counter, isEnabled: counter > 0, isBlurred: true)));
+            counter: counter, isEnabled: counter > 0, isBlurred: true, onPressed: () => counter++,)));
     await tester.pumpAndSettle();
+    await expectLater(find.byType(ExpandedFABCounter),
+        matchesGoldenFile('010ExpandedFAB.png'));
 
     // Check counter
     expect(counter, 0);
@@ -71,6 +77,22 @@ void main() {
     // Check blur and gradient;
     expect(isBlurred(), true);
     expect(isEnabled(), false);
+
+    await tester.tap(find.byType(RawMaterialButton));
+    await tester.pumpWidget(MaterialApp(
+        home: ExpandedFABCounter(
+            counter: counter, isEnabled: counter > 0, isBlurred: true)));
+    await tester.pumpAndSettle();
+    await expectLater(find.byType(ExpandedFABCounter),
+        matchesGoldenFile('111ExpandedFAB.png'));
+
+    // Check counter
+    expect(counter, 1);
+    expect(counterFinder(), findsOneWidget);
+
+    // Check blur and gradient;
+    expect(isBlurred(), true);
+    expect(isEnabled(), true);
   });
 
   const double kElevation = 4.0;

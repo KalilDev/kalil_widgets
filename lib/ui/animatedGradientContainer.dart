@@ -6,7 +6,7 @@ class AnimatedGradientContainer extends StatefulWidget {
   const AnimatedGradientContainer({
     Key key,
     @required this.isEnabled,
-    @required this.child,
+    this.child,
     @required this.colors,
     this.height,
     this.width,
@@ -47,7 +47,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
     _controller = AnimationController(
         vsync: this, duration: widget.duration);
     final Animation<double> curved = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _animation = LinearGradientTween(
+    _animation = _LinearGradientTween(
         begin: LinearGradient(
                 colors: widget.colors, stops: widget.falseValues),
             end:
@@ -74,7 +74,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
   @override
   Widget build(BuildContext context) {
     final Animation<double> curved = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _animation = LinearGradientTween(
+    _animation = _LinearGradientTween(
         begin: LinearGradient(
             colors: _oldColors, stops: widget.falseValues),
         end:
@@ -96,7 +96,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
             height: widget.height,
             width: widget.width,
             decoration: BoxDecoration(
-              gradient: LinearGradientTween(begin: _animation.value, end: LinearGradient(colors: widget.colors, stops: _animation.value.stops)).lerp(_onChangeAnim.value),
+              gradient: _LinearGradientTween(begin: _animation.value, end: LinearGradient(colors: widget.colors, stops: _animation.value.stops)).lerp(_onChangeAnim.value),
             ),
             child: widget.child,
         )
@@ -105,9 +105,9 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
   }
 }
 
-class LinearGradientTween extends Tween<LinearGradient> {
+class _LinearGradientTween extends Tween<LinearGradient> {
   /// Provide a begin and end Gradient. To fade between.
-  LinearGradientTween({
+  _LinearGradientTween({
     LinearGradient begin,
     LinearGradient end,
   }) : super(begin: begin, end: end);
@@ -130,7 +130,7 @@ class LinearGradientTween extends Tween<LinearGradient> {
       stops: interpolated.stops,
       tileMode: t < 0.5
           ? begin.tileMode
-          : end.tileMode, // TODO(ianh): interpolate tile mode
+          : end.tileMode,
     );
   }
 }
