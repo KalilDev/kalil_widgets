@@ -21,11 +21,6 @@ class _IncDecButtonState extends State<IncDecButton>
   AnimationController _scaleController;
   Animation<double> _scale;
 
-  AnimationController _colorController;
-  Animation<double> _color;
-  Color _oldColor;
-  Color _newColor;
-
   @override
   void initState() {
     super.initState();
@@ -36,17 +31,6 @@ class _IncDecButtonState extends State<IncDecButton>
     _scale = NonNegativeTween<double>(begin: animationStart, end: 1.0).animate(CurvedAnimation(
         parent: _scaleController, curve: Curves.easeInOut));
     _scaleController.forward();
-    _colorController = AnimationController(
-      duration: durationAnimationMedium,
-      vsync: this
-    );
-    _color = CurvedAnimation(parent: _colorController, curve: Curves.easeInOut);
-    _colorController.addListener(() {
-      if (_colorController.status == AnimationStatus.completed) {
-        _colorController.value = 0.0;
-        _oldColor = _newColor;
-      }
-    });
   }
 
   @override
@@ -70,14 +54,6 @@ class _IncDecButtonState extends State<IncDecButton>
         : Theme
         .of(context)
         .primaryColor;
-    if (color != _newColor) {
-      _newColor = color;
-      if (_oldColor != null) {
-        _colorController.forward();
-      } else {
-        _oldColor = color;
-      }
-    }
     return ScaleTransition(
       scale: _scale,
       child: Material(
@@ -86,18 +62,16 @@ class _IncDecButtonState extends State<IncDecButton>
         child: BlurOverlay.roundedRect(
           enabled: widget.isBlurred,
           radius: 80,
-          child: AnimatedBuilder(
-            animation: _color,
-            builder: (BuildContext context, _) => Material(
-                color: ColorTween(begin: _oldColor, end: color).lerp(_color.value),
-                child: Row(children: <Widget>[
-                  DecreaseButton(
-                      value: widget.value, onDecrease: widget.onDecrease, color: Theme.of(context).colorScheme.onPrimary),
-                  IncreaseButton(
-                      value: widget.value, onIncrease: widget.onIncrease, color: Theme.of(context).colorScheme.onPrimary),
-                ]),
-              )
-          ),
+          child: AnimatedContainer(
+            duration: durationAnimationMedium,
+            color: color,
+            child: Row(children: <Widget>[
+              DecreaseButton(
+                  value: widget.value, onDecrease: widget.onDecrease, color: Theme.of(context).colorScheme.onPrimary),
+              IncreaseButton(
+                  value: widget.value, onIncrease: widget.onIncrease, color: Theme.of(context).colorScheme.onPrimary),
+            ]),
+          )
         ),
       ),
     );
@@ -117,7 +91,7 @@ class IncreaseButton extends StatefulWidget {
 
 class _IncreaseButtonState extends State<IncreaseButton>
     with TickerProviderStateMixin {
-  double oldValue;
+  double _oldValue;
   AnimationController _plusController;
   Animation<double> _plus;
 
@@ -133,7 +107,7 @@ class _IncreaseButtonState extends State<IncreaseButton>
           _plusController.forward();
         }
       });
-    oldValue = widget.value;
+    _oldValue = widget.value;
     _plusController.value = 1.0;
   }
 
@@ -145,10 +119,10 @@ class _IncreaseButtonState extends State<IncreaseButton>
 
   @override
   Widget build(BuildContext context) {
-    if (oldValue != widget.value) {
-      if (oldValue < widget.value)
+    if (_oldValue != widget.value) {
+      if (_oldValue < widget.value)
         _plusController.reverse();
-      oldValue = widget.value;
+      _oldValue = widget.value;
     }
     return ScaleTransition(
         child: IconButton(
@@ -173,7 +147,7 @@ class DecreaseButton extends StatefulWidget {
 
 class _DecreaseButtonState extends State<DecreaseButton>
     with TickerProviderStateMixin {
-  double oldValue;
+  double _oldValue;
   AnimationController _minusController;
   Animation<double> _minus;
 
@@ -189,7 +163,7 @@ class _DecreaseButtonState extends State<DecreaseButton>
           _minusController.forward();
         }
       });
-    oldValue = widget.value;
+    _oldValue = widget.value;
     _minusController.value = 1.0;
   }
 
@@ -201,10 +175,10 @@ class _DecreaseButtonState extends State<DecreaseButton>
 
   @override
   Widget build(BuildContext context) {
-    if (oldValue != widget.value) {
-      if (oldValue > widget.value)
+    if (_oldValue != widget.value) {
+      if (_oldValue > widget.value)
         _minusController.reverse();
-      oldValue = widget.value;
+      _oldValue = widget.value;
     }
     return ScaleTransition(
         child: IconButton(

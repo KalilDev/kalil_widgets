@@ -16,9 +16,9 @@ void main() {
     }
 
     bool isBlurred() {
-      final Finder blurFinder = find.byType(BlurOverlay);
-      final BlurOverlay blur = tester.widget(blurFinder);
-      return blur.enabled;
+      final Finder gradientFinder = find.byType(ExpandedFABCounter);
+      final ExpandedFABCounter expandedFAB = tester.widget(gradientFinder);
+      return expandedFAB.isBlurred;
     }
 
     await tester.pumpWidget(MaterialApp(
