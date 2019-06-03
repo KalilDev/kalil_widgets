@@ -2,105 +2,56 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kalil_widgets/constants.dart';
 
-class AnimatedGradientContainer extends StatefulWidget {
-  const AnimatedGradientContainer({
+class AnimatedGradientContainer extends ImplicitlyAnimatedWidget {
+  AnimatedGradientContainer({
     Key key,
-    @required this.isEnabled,
+    @required bool isEnabled,
     this.child,
     @required this.colors,
-    this.height,
-    this.width,
-    this.trueValues = const <double>[0.6, 1.0],
-    this.falseValues = const <double>[0.0, 0.4],
+    double height,
+    double width,
+    BoxConstraints constraints,
+    List<double> trueValues = const <double>[0.6, 1.0],
+    List<double> falseValues = const <double>[0.0, 0.4],
     Duration duration,
-  }) : duration = (duration != null) ? duration : durationAnimationLong,
-       super(key: key);
+  }) : values = isEnabled ? trueValues : falseValues,
+        constraints =
+        (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height)
+            ?? BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
+        super(key: key, duration: (duration != null) ? duration : durationAnimationLong);
 
-  final bool isEnabled;
   final Widget child;
   final List<Color> colors;
-  final double height;
-  final double width;
-  final List<double> trueValues;
-  final List<double> falseValues;
-  final Duration duration;
+  final List<double> values;
+  final BoxConstraints constraints;
 
   @override
   _AnimatedGradientContainerState createState() =>
       _AnimatedGradientContainerState();
 }
 
-class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
+class _AnimatedGradientContainerState extends AnimatedWidgetBaseState<AnimatedGradientContainer>
     with TickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<LinearGradient> _animation;
 
-  bool _isEnabled;
-
-  List<Color> _oldColors;
-  AnimationController _onChangeController;
-  Animation<double> _onChangeAnim;
+  _LinearGradientTween _gradient;
+  BoxConstraintsTween _constraints;
 
   @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-        vsync: this, duration: widget.duration);
-    final Animation<double> curved = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _animation = _LinearGradientTween(
-        begin: LinearGradient(
-                colors: widget.colors, stops: widget.falseValues),
-            end:
-            LinearGradient(colors: widget.colors, stops: widget.trueValues))
-        .animate(curved);
-    _controller.value = widget.isEnabled ? 1.0 : 0.0;
-
-    _oldColors = widget.colors;
-    _onChangeController = AnimationController(vsync: this, duration: durationAnimationMedium);
-    _onChangeAnim = CurvedAnimation(parent: _onChangeController, curve: Curves.easeInOut);
-    _onChangeController.addListener(() {
-      if (_controller.status == AnimationStatus.completed || _controller.status == AnimationStatus.dismissed)
-        _oldColors = widget.colors;
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _onChangeController.dispose();
-    super.dispose();
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _gradient = visitor(_gradient, LinearGradient(colors: widget.colors, stops: widget.values), (dynamic value) => _LinearGradientTween(begin: value));
+    _constraints = visitor(_constraints, widget.constraints, (dynamic value) => BoxConstraintsTween(begin: value));
   }
 
   @override
   Widget build(BuildContext context) {
-    final Animation<double> curved = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _animation = _LinearGradientTween(
-        begin: LinearGradient(
-            colors: _oldColors, stops: widget.falseValues),
-        end:
-        LinearGradient(colors: _oldColors, stops: widget.trueValues))
-        .animate(curved);
-    if (_isEnabled != widget.isEnabled) {
-      widget.isEnabled ? _controller.forward() : _controller.reverse();
-      _isEnabled = widget.isEnabled;
-    }
-    if (_oldColors != widget.colors) {
-      _onChangeController.value = 0.0;
-      _onChangeController.forward();
-    }
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (BuildContext context, _) => AnimatedBuilder(
-          animation: _onChangeAnim,
-            builder: (BuildContext context, _) => Container(
-            height: widget.height,
-            width: widget.width,
-            decoration: BoxDecoration(
-              gradient: _LinearGradientTween(begin: _animation.value, end: LinearGradient(colors: widget.colors, stops: _animation.value.stops)).lerp(_onChangeAnim.value),
-            ),
-            child: widget.child,
-        )
-      )
+    return Container(
+      constraints: _constraints?.evaluate(animation),
+      decoration: BoxDecoration(
+        gradient: _gradient?.evaluate(animation),
+      ),
+      child: widget.child,
     );
   }
 }

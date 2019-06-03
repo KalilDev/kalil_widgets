@@ -10,9 +10,9 @@ void main() {
     Finder counterFinder() => find.text(counter.toString());
 
     bool isEnabled() {
-      final Finder gradientFinder = find.byType(AnimatedGradientContainer);
-      final AnimatedGradientContainer gradient = tester.widget(gradientFinder);
-      return gradient.isEnabled;
+      final Finder gradientFinder = find.byType(ExpandedFABCounter);
+      final ExpandedFABCounter expandedFAB = tester.widget(gradientFinder);
+      return expandedFAB.isEnabled;
     }
 
     bool isBlurred() {
