@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../constants.dart';
 import 'blurOverlay.dart';
 import 'nonNegativeTween.dart';
+import 'animatedGradientContainer.dart';
 
 enum PlayerState { stopped, playing, paused }
 
@@ -28,6 +29,8 @@ class PlaybackButton extends StatefulWidget {
 
 class _PlaybackButtonState extends State<PlaybackButton>
     with TickerProviderStateMixin {
+  static const Duration _playerTickRate = Duration(milliseconds: 200);
+
   AudioPlayer _audioPlayer;
   Duration _duration;
   Duration _position;
@@ -98,26 +101,26 @@ class _PlaybackButtonState extends State<PlaybackButton>
           child: BlurOverlay.roundedRect(
             radius: 80,
             enabled: widget.isBlurred,
-            child: Container(
+            child: AnimatedGradientContainer(
+              isEnabled: false,
+              colors: widget.isBlurred
+                  ? <Color>[
+                Theme.of(context)
+                    .colorScheme
+                    .error
+                    .withAlpha(150),
+                Theme.of(context).primaryColor.withAlpha(150)
+              ]
+                  : <Color>[
+                Theme.of(context).colorScheme.error,
+                Theme.of(context).primaryColor
+              ],
+              falseValues: <double>[
+                -0.1 + playbackProportion,
+                0.1 + playbackProportion
+              ],
               height: 48,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: widget.isBlurred
-                          ? <Color>[
-                              Theme.of(context)
-                                  .colorScheme
-                                  .error
-                                  .withAlpha(150),
-                              Theme.of(context).primaryColor.withAlpha(150)
-                            ]
-                          : <Color>[
-                              Theme.of(context).colorScheme.error,
-                              Theme.of(context).primaryColor
-                            ],
-                      stops: <double>[
-                    -0.1 + playbackProportion,
-                    0.1 + playbackProportion
-                  ])),
+              duration: _playerTickRate,
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
@@ -160,7 +163,8 @@ class _PlaybackButtonState extends State<PlaybackButton>
                                 activeTrackColor: Colors.transparent,
                                 inactiveTrackColor: Colors.transparent,
                                 thumbColor: color),
-                            child: Slider(
+                            child: _SmoothSlider(
+                              duration: _playerTickRate,
                               max: _duration?.inMilliseconds?.toDouble() ?? 1.0,
                               value: (_position != null &&
                                       _duration != null &&
@@ -245,4 +249,28 @@ class _PlaybackButtonState extends State<PlaybackButton>
     setState(() {
       _playerState = PlayerState.stopped;});
   }
+}
+
+class _SmoothSlider extends ImplicitlyAnimatedWidget {
+  const _SmoothSlider({@required this.value, @required this.max, @required this.onChanged, @required Duration duration}) : super(duration: duration);
+  final double value;
+  final double max;
+  final ValueChanged<double> onChanged;
+
+  @override
+  _SmoothSliderState createState() => _SmoothSliderState();
+}
+
+class _SmoothSliderState extends AnimatedWidgetBaseState<_SmoothSlider> {
+  Tween<double> _value;
+  Tween<double> _max;
+
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _value = visitor(_value, widget.value, (dynamic value) => Tween<double>(begin: value));
+    _max = visitor(_max, widget.max, (dynamic value) => Tween<double>(begin: value));
+  }
+
+  @override
+  Widget build(BuildContext context) => Slider(value: _value.evaluate(animation), onChanged: widget.onChanged, max: _max.evaluate(animation));
 }
